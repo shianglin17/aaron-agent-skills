@@ -1,0 +1,18 @@
+{
+    "name": "filament-operating-manual-runner",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "compile": "node scripts/compile-plan.js",
+        "capture": "PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers node scripts/capture.js",
+        "check": "node scripts/check-results.js",
+        "contact-sheet": "PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers node scripts/generate-contact-sheet.js",
+        "retry": "PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers node scripts/capture.js --review docs/operating-manual/.capture/review.json",
+        "promote": "node scripts/promote-approved.js",
+        "test": "PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers node --test --test-concurrency=1 tests/*.test.js"
+    },
+    "devDependencies": {
+        "js-yaml": "^5.2.3",
+        "playwright": "1.62.1"
+    }
+}
