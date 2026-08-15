@@ -78,7 +78,11 @@ squash merge 的分支不會被 `--merged` 認出來（內容進了 main，但 c
 git branch -D <headRefName>   # 僅限已確認 MERGED 的 squash 分支
 ```
 
-遠端分支通常已由 GitHub 自動刪除；`git branch -r` 還看得到就表示沒開自動刪除，回報一句讓使用者去 repo 設定開啟，**不要自己刪遠端分支**。
+遠端分支只有在 repo 開了 `delete_branch_on_merge` 時才會自動刪除，而**這個選項預設是關的**。`git fetch --prune` 之後 `git branch -r` 還看得到來源分支，就是沒開。回報一句並附上開啟指令，**不要自己刪遠端分支**：
+
+```bash
+gh api -X PATCH repos/{owner}/{repo} -F delete_branch_on_merge=true
+```
 
 ### 5. 回報 main 的 CI 狀態
 

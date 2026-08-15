@@ -66,7 +66,9 @@ npx skills experimental_install
 
 ### PR 標題用 conventional commit 格式，不用 `[type]` 括號
 
-團隊 repo 用 `[feat XX-90] 摘要` 是為了和 commit 區隔。個人 repo 反過來：**squash merge 會拿 PR 標題當 commit message**，標題破格，`main` 的歷史就跟著破。兩邊格式一致，squash 與 merge commit 都不會出事。
+團隊 repo 用 `[feat XX-90] 摘要` 是為了和 commit 區隔 —— 個人 repo 一眼就知道自己在看什麼，那個區隔沒有價值，只是多一套要記的規則。
+
+順帶釐清一個常見誤解：**PR 標題會不會進 `main` 的歷史，取決於 merge 策略**。只有 squash 會拿它當 commit subject；merge commit 把它放進 body，rebase 根本不用。所以統一格式是保險（哪天按了 squash 不會留下破格的 commit），不是「否則一定會壞」。策略本身建議選 merge commit，理由寫在 `git-rules`。
 
 ### 命名比分組重要
 

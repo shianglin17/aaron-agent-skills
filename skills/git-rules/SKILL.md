@@ -53,7 +53,38 @@ build  chore  ci  docs  feat  fix  perf  refactor  revert  style  test
 ❌  [feat] 支援取消原因              ← 括號格式是團隊 repo 的慣例，個人 repo 不用
 ```
 
-理由很實際：**squash merge 會拿 PR 標題當 commit message**。標題只要不是 conventional commit 格式，squash 進 `main` 的那筆 commit 就直接破格，CHANGELOG 與任何 commit lint 都跟著壞掉。維持同一個格式，squash 與 merge commit 兩種策略都不會出事。
+三種 merge 策略對 PR 標題的處理**完全不同**，別以為它一定會進歷史：
+
+| 策略 | PR 標題的下場 |
+|---|---|
+| Squash | **成為 `main` 上那筆 commit 的 subject** |
+| Merge commit | subject 是 `Merge pull request #N from ...`，PR 標題掉到 body 第二行 |
+| Rebase | 完全不使用，只把原本的 commit 搬過去 |
+
+squash 還有一個容易誤判的細節：GitHub 預設 `squash_merge_commit_title` 是 `COMMIT_OR_PR_TITLE` —— PR 只有**一個** commit 時用那個 commit 的訊息，**兩個以上**才用 PR 標題。同樣按 squash，來源不一樣。
+
+所以「格式錯會弄壞 `main` 的歷史」只在 squash 成立。一律用同一格式的理由是另外兩個：**少記一套規則**（`[feat] 摘要` 那種括號格式是團隊 repo 為了和 commit 區隔用的，個人 repo 一眼就知道自己在看什麼，區隔沒有價值），以及**repo 設定會變** —— 哪天為了壓掉一條雜亂的分支按了 squash，不會因此在 `main` 留下一筆破格的 commit。
+
+## 選哪一種 merge 策略
+
+**預設用 merge commit**，並在 repo 設定裡把另外兩個關掉。
+
+關鍵在於 commit 有沒有先整理過。`open-pr` 已經要求 push 前把歷史整理成有意義的單位 —— 既然付出了那個成本，squash 就是把剛整理好的東西丟掉。merge commit 保留它，而且 `Merge pull request #N` 留下了回頭找 PR 討論與 review 留言的線索（rebase merge 沒有這個）。未來若接發版工具也一樣：它讀個別 commit，squash 之後只剩 PR 標題那一筆有效。
+
+嫌線圖亂的話，這就是「一行一個 PR」的視圖：
+
+```bash
+git log --first-parent --oneline
+```
+
+三種策略都開著的實際風險是按錯鈕。收斂設定：
+
+```bash
+gh api -X PATCH repos/{owner}/{repo} \
+  -F allow_squash_merge=false -F allow_rebase_merge=false -F delete_branch_on_merge=true
+```
+
+反過來說，**如果你不打算整理 commit**，那就該用 squash 而不是 merge commit —— 兩者是同一個問題的兩種解法，挑一個，不要都做也不要都不做。
 
 ## Commit
 
