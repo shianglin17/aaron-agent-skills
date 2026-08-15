@@ -1,29 +1,19 @@
-# Ticket
+## 摘要
 
-/**有票號才填，沒有就整段刪掉。**/
-Ticket id: #(ticket id)
-Ticket link: (link)
+<!-- 這個 PR 解決什麼問題。寫給三個月後的自己看。 -->
 
-## Change Type
+## 變更
 
-/**刪掉不相關的選項。**/
+- <!-- 列出主要變更。不要複製 commit 清單。 -->
 
-- [ ] Bug fix (non-breaking change)
-- [ ] New feature (non-breaking change)
-- [ ] Breaking change
-- [ ] Documentation or dependency update
+## 驗證
 
-## Description
+<!-- 只勾真的跑過的。沒跑的留空並在補充說明原因。 -->
 
-/**寫改了什麼、為什麼，給 reviewer 看。修掉票號就註明。**/
-ex: resolve #(ticket id) login bug
+- [ ] 測試通過
+- [ ] 靜態檢查與格式檢查通過
+- [ ] UI 變更已檢查 desktop 與 mobile
 
-## Pre-merge Checklist
+## 補充
 
-- [ ] I have tested changes locally and confirmed behavior is stable
-- [ ] I added comments only where logic is hard to understand
-- [ ] I updated docs, or docs update is not required for this change
-- [ ] PR title and body follow team standards
-- [ ] Tests and formatter/linter checks pass
-
-## Additional Notes
+<!-- 風險、取捨、migration、需要 reviewer 特別看的地方。沒有就刪掉這節。 -->

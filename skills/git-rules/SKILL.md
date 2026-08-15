@@ -1,53 +1,59 @@
 ---
 name: git-rules
-description: 團隊的 Git 工作流規範：分支命名、conventional commit、PR 標題與模板、rebase 整理、semantic-release 設定。用於檢查或修正分支／commit／PR 標題是否合規，或為新 repo 建立 PR 模板與發版設定。與語言無關，各語言差異只在 Pre-PR 檢查指令。
+description: 個人專案的 Git 規範：分支命名、conventional commit、PR 標題格式、commit 歷史整理。用於檢查或修正分支／commit／PR 標題是否合規，或為新 repo 建立 PR 模板。與語言無關。
 ---
 
 # Git Rules
 
 遵循 Conventional Commits 與 SemVer。**以下只記錄與通則不同、或實務上最常搞錯的部分**，通則本身不重述。
 
+## 前提：單人專案，但一樣走 PR
+
+沒有同事會擋你，所以很容易「反正是我自己的 repo」就直接 push `main`。**預設仍然走 PR**，理由不是流程潔癖：
+
+- PR 是自動 reviewer（Codex、Copilot、`/code-review`）唯一能介入的地方。直接 push 就等於沒有任何 review。
+- PR 是 CI 的觸發點，也是日後回頭找「這段為什麼這樣寫」的唯一敘事單位。
+
+真正該直接 push `main` 的只有一種：**還沒有任何 CI、也還沒有第一個 commit 的空 repo 初始化**。其餘一律開分支。
+
 ## Type 清單
 
 ```
-build  chore  ci  docs  feat  fix  perf  refactor  revert  style  test  infra
+build  chore  ci  docs  feat  fix  perf  refactor  revert  style  test
 ```
 
-`infra` 是自訂（基礎設施、部署設定），不在 Conventional Commits 標準內。
-
-分支流程另有 `hotfix`，僅用於緊急上線；它不是 commit type。
+就是 Conventional Commits 標準的那一份，不自訂新 type。想加 type 之前先問：它是不是 `chore` 或 `build` 的子集？多半是。
 
 ## 分支命名
 
 ```
-<type>/<project-ticket>/<name>     有票號
-<type>/<name>                      無票號
+<type>/<name>            預設
+<type>/<issue>/<name>    有對應的 GitHub issue 時
 ```
 
 - 全小寫，詞之間用 `-`
-- 票號格式 `xx-90`（專案代號小寫 + 連字號 + 數字）
+- issue 段就寫 `issue-12`，不要自創票號體系
 
 ```
-✅  feat/xx-1/backstage-header      fix/xx-2/button-is-missing      chore/adjust-ci
-❌  Feat/xx-1/...（型別大寫）  feat/XX-1/...（票號大寫）  feat/xx_1/...（底線）
+✅  feat/booking-cancel-reason    fix/issue-12/token-expiry    chore/bump-deps
+❌  Feat/...（型別大寫）  feat/booking_cancel（底線）  feature/...（型別不在清單內）
 ```
 
-合併後刪除分支，不要留著累積。
+合併後刪除分支，本地與遠端都要（`sync-main` 會做）。
 
-## PR 標題
-
-```
-[<type> TICKET-ID] 摘要      有票號
-[<type>] 摘要                無票號
-```
-
-**type 與 commit 用同一份清單**，不另設一套詞彙。
+## PR 標題：和 commit 用同一個格式
 
 ```
-✅  [feat XX-90] 新增登入端點      [fix] 修正 token 過期判斷      [chore] 升級依賴
+<type>(<scope>): <subject>          ← 與 commit 完全相同的格式
+<type>(<scope>): <subject> (#12)    ← 有 issue 時
 ```
 
-括號是刻意的：它標示這是 PR 標題而非 commit message。semantic-release 讀的是 commit，不讀 PR 標題，兩者不衝突。
+```
+✅  feat(booking): 支援取消原因      fix: 修正 token 過期判斷 (#12)
+❌  [feat] 支援取消原因              ← 括號格式是團隊 repo 的慣例，個人 repo 不用
+```
+
+理由很實際：**squash merge 會拿 PR 標題當 commit message**。標題只要不是 conventional commit 格式，squash 進 `main` 的那筆 commit 就直接破格，CHANGELOG 與任何 commit lint 都跟著壞掉。維持同一個格式，squash 與 merge commit 兩種策略都不會出事。
 
 ## Commit
 
@@ -56,9 +62,9 @@ build  chore  ci  docs  feat  fix  perf  refactor  revert  style  test  infra
 ```
 
 - 一個 commit 一個邏輯變更
-- 開 PR 前用 interactive rebase 把歷史整理成可 review、可回溯的單位
-- Breaking change 用 `!` 或在 body 寫 `BREAKING CHANGE:` —— 這會觸發 MAJOR，確認真的要跳大版號再用
+- Breaking change 用 `!` 或在 body 寫 `BREAKING CHANGE:`
 - subject 中英文皆可；寫英文時用祈使句、開頭小寫
+- **不寫 AI 署名**（`Co-Authored-By`、`Generated with` 之類一律不加）
 
 ### scope
 
@@ -77,24 +83,32 @@ build  chore  ci  docs  feat  fix  perf  refactor  revert  style  test  infra
 git log --oneline -100 --pretty=%s | grep -oE '^[a-z]+\(([^)]+)\)' | sort -u
 ```
 
-`chore(release)` 是 semantic-release 自動產生的，不要手寫。
+## 歷史整理：只在推送前
 
-## 發版對應
+和 agent 一起做事會產生大量「試了 A、改成 B、又退回 A」的 commit。**同一個檔案被反覆決策的過程不該進 `main` 的歷史** —— 它記錄的是探索過程，不是變更。
 
-`feat` → MINOR，`fix`／`perf` → PATCH，breaking → MAJOR。其餘 type 不發版。
-
-選 type 時記得這件事：把該發版的改動寫成 `chore` 會導致版本不動。
-
-版本號在兩個地方格式不同，容易搞錯：
-
+```bash
+git rebase -i origin/main
 ```
-git tag    v1.2.3      帶 v 前綴（semantic-release 的 tagFormat 預設）
-VERSION    1.2.3       不帶 v，純 semver
-```
+
+界線很明確：
+
+| 分支狀態 | 可以做的 |
+|---|---|
+| 還沒 push（`git rev-parse --verify --quiet @{upstream}` 無輸出） | 自由 rebase、squash、reword |
+| 已經 push 過 | **不改寫歷史**。要對齊 `main` 用 `git merge`，不用 rebase |
+
+已推送的分支就算只有自己在看，force push 也會讓 PR 上既有的 review 留言失去行號錨點。不值得。
+
+## 版本號
+
+`feat` → MINOR，`fix`／`perf` → PATCH，breaking → MAJOR。其餘 type 不影響版本。
+
+個人專案多半沒有裝發版工具，這時 type 的作用只剩「CHANGELOG 好不好讀」—— 但選錯還是會有代價：日後真的要接 semantic-release 時，過去所有寫成 `chore` 的功能都追不回來了。當下就選對。
 
 ## 流程
 
-1. 判斷要做的是哪一件：驗證格式、建立 PR 模板、或設定 semantic-release。
+1. 判斷要做的是哪一件：驗證格式、或為 repo 建立 PR 模板。
 2. 對照上面的規則檢查。
 3. 格式不合時給出**改正後的具體字串**，不要只說「不符規範」。
 4. 重新檢查並列出仍需人工處理的部分。
@@ -108,6 +122,5 @@ git log -1 --pretty=%s
 
 ## 檔案
 
-- `references/pre-pr-checklist.md` — 開 PR 前要跑的檢查，依語言分節
-- `references/semantic-release.md` — semantic-release 設定，含各語言的版本號寫入方式
+- `references/quality-checks.md` — 怎麼找出「這個專案該跑哪些檢查」
 - `assets/pr-template.md` — PR 模板，複製到目標 repo 的 `.github/pull_request_template.md`

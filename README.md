@@ -1,6 +1,23 @@
 # aaron-agent-skills
 
-個人維護的 agent skills。遵循 [Agent Skills](https://agentskills.io) 開放標準，可用於 Claude Code、Codex、Cursor 等支援該格式的工具。
+個人專案開發流程的 agent skills。遵循 [Agent Skills](https://agentskills.io) 開放標準，可用於 Claude Code、Codex、OpenCode 等支援該格式的工具。
+
+工作上的流程在另一個 repo（`menai-skills`），兩邊**刻意不共用** —— 公司流程綁著票號體系、部署分支、semantic-release 與 SonarQube，那些放進個人 repo 只會變成永遠用不到的雜訊。
+
+## 涵蓋範圍
+
+一個 PR 的完整生命週期，四個 skill：
+
+| Skill | 用途 |
+|---|---|
+| `git-rules` | 分支命名、commit 格式、PR 標題、歷史整理的界線 |
+| `open-pr` | 開分支 → 跑專案的品質檢查 → 整理 commit → 依模板開 PR |
+| `verify-review-findings` | 逐條核實 reviewer 的 finding，再決定要不要改 |
+| `sync-main` | PR 合併後更新 main、清理分支、回報 CI |
+
+四個互相引用，一起裝。
+
+**不含部署。** 部署分支、發版工具、環境設定各專案差異太大，寫成通用 skill 只會逼你每次接新專案都先改 skill 本體 —— 那放在專案自己的文件裡更好。
 
 ## 安裝
 
@@ -10,98 +27,64 @@
 npx skills add shianglin17/aaron-agent-skills
 ```
 
-私有 repo 用同一個指令即可，認證會依序嘗試 Git credentials → `gh repo clone` → SSH。指定工具用 `-a`：
+指定工具用 `-a`：
 
 ```bash
-npx skills add shianglin17/aaron-agent-skills -a claude-code -a codex
+npx skills add shianglin17/aaron-agent-skills -a claude-code -a codex -a opencode
 ```
 
-安裝後 skill 落在 `.agents/skills/`（實體檔案）與各工具自己的目錄（Claude Code 是 `.claude/skills/`，以 symlink 指向前者）。這些路徑通常在 `.gitignore` 內，由各使用者自行安裝。
+安裝後 skill 落在 `.agents/skills/`（實體檔案）與各工具自己的目錄（Claude Code 是 `.claude/skills/`，以 symlink 指向前者）。
 
-要讓協作者裝到相同版本，把 `npx skills` 產生的 `skills-lock.json` 進版控，其他人跑：
+**單人專案建議把 `.agents/` 與 `skills-lock.json` 進版控**：換一台機器就直接有，不必記得重裝，也不會出現兩台機器行為不一致。多人專案才傾向 gitignore 掉、各自跑：
 
 ```bash
 npx skills experimental_install
 ```
 
-### Claude Code（plugin 方式，可分組安裝與更新）
+### Claude Code（plugin 方式）
 
 ```bash
 /plugin marketplace add shianglin17/aaron-agent-skills
 /plugin install gitflow@aaron-skills
 ```
 
-之後用 `/plugin marketplace update` 拉最新版。
+之後用 `/plugin marketplace update` 拉最新版。只在 Claude Code 有效，跨工具請用上面的 `npx skills`。
 
-## 分組方式
+## 設計取向
 
-判準是「**這個 skill 換到別的語言還能用嗎**」—— 能，就用功能命名；不能，就用語言命名。
+### 檢查指令從專案讀，不寫死在 skill 裡
 
-| Plugin | Skill | 用途 |
-|---|---|---|
-| `gitflow` | `git-rules` | 分支命名、commit type、PR 標題格式、發版對應 |
-| | `open-pr` | 開分支、commit、依模板開 PR |
-| | `verify-review-findings` | 逐條核實 PR 上 reviewer 的 finding 再決定要不要改 |
-| | `sync-deploy` | PR 合併後把 main 同步到部署分支 |
-| `code-quality` | `sonarqube-scan` | Docker 起本機 SonarQube 掃描專案 |
-| `php` | `filament-operating-manual` | Playwright 批次截圖 + 寫入 Google Doc 的操作手冊 |
+早期版本在 skill 內維護一份「Laravel 跑這些、.NET 跑這些」的對照表。實際用起來會漏 —— 一個 Laravel + Inertia 專案照著「PHP 就是 `artisan test` + `pint`」跑，會漏掉 TypeScript 型別檢查、前端 lint、前端測試與 build，而 CI 全都會跑，PR 開出去才紅。
 
-`gitflow` 涵蓋一個 PR 的完整生命週期：開 PR → 處理 review 留言 → 合併 → 同步部署。其中 `git-rules`、`open-pr`、`sync-deploy` 互相引用，要一起裝。
+現在的做法是讀專案自己的定義，順序是 `.github/workflows/` → `composer.json` / `package.json` scripts → 設定檔存在性 → 才是預設值。細節在 `git-rules/references/quality-checks.md`。
 
-### 分組用原生語言，不用框架
+### 沒有同事，所以檢查往前挪
 
-新增語言時開新 plugin（`dotnet`、`javascript`、`python`…）；語言無關的歸到現有的功能分組。**不要用框架當分組名**（不開 `laravel`、`react` 這種）：
+團隊 repo 裡 reviewer 是最後一道防線，`open-pr` 可以不跑測試就把 PR 丟出去。個人 repo 沒有那道防線，所以 `open-pr` **在 commit 之前就跑專案的檢查**，失敗不繼續。
 
-- **框架會換，語言不會。** 一個 PHP 專案可能用 Laravel 也可能用 Symfony，但 `composer`、`pint`、`phpstan` 是共通的。分組用框架會讓兩組重複一堆同語言的通用 skill。
-- **分組不需要精細。** skill 的 `description` 一直在 context（很短），`body` 只在真正使用時才載入 —— 裝到用不上的 skill 成本很低。粗分組加好命名比細分組容易維護。
+同理，PR 本身不是形式 —— 它是自動 reviewer（Codex、Copilot、`/code-review`）唯一能介入的地方。直接 push `main` 等於完全沒有 review。
 
-### skill 名稱用最小範圍的技術 stack 當前綴
+### PR 標題用 conventional commit 格式，不用 `[type]` 括號
 
-```
-plugin:  php                          ← 原生語言
-skill:   filament-operating-manual    ← 最小範圍：Filament 而非 Laravel
-```
+團隊 repo 用 `[feat XX-90] 摘要` 是為了和 commit 區隔。個人 repo 反過來：**squash merge 會拿 PR 標題當 commit message**，標題破格，`main` 的歷史就跟著破。兩邊格式一致，squash 與 merge commit 都不會出事。
 
-前綴取**最小範圍**，因為那才精確描述「我什麼時候需要它」。Filament 是 Laravel 的套件，比 Laravel 更小，所以用 `filament-`。
+### 命名比分組重要
 
-命名比分組重要得多：
+skill 改名的代價遠高於改分組：
 
 | | 改起來的代價 |
 |---|---|
-| 分組 | 改 `marketplace.json` 一行，使用者重裝一次 |
+| 分組 | 改 `marketplace.json` 一行，重裝一次 |
 | skill 名稱 | 要改所有互相引用的 skill，且每個裝過的人都得手動遷移 |
 
-改名之後 `npx skills update` **只能做到一半**：它會警告該 skill 在 upstream 已不存在，但不會裝上改名後的新 skill（它不知道新名字）。所以每個人都得跑兩步：
+而且 `npx skills update` 遇到改名**只能做到一半**：它會警告該 skill 在 upstream 已不存在，但不會裝上改名後的新 skill（它不知道新名字），得再跑一次 `npx skills add`。清理行為也不可靠 —— 實測 `update -y` 印出 `Skipping deletion in non-interactive mode` 卻仍把舊目錄刪了。
 
-```bash
-npx skills update                              # 互動模式才會問要不要清掉舊的
-npx skills add <owner>/<repo>                  # 裝改名後的新 skill
-```
+所以**名稱一次想好，分組可以先粗**。目前全部塞在 `gitflow` 一組；等某個領域的 skill 多到 5、6 個再拆。不預先開空分組。
 
-清理行為也不可靠 —— 實測 `update -y` 印出 `Skipping deletion in non-interactive mode` 卻仍把舊目錄刪了，之後 `skills remove` 又回報 `No matching skills found`。所以**名稱要一次想好，分組可以先粗**。等某個框架的 skill 多到 5、6 個，再拆出獨立分組即可。也因此不必預先開空的 `dotnet`、`react` 分組 —— 空分組沒有意義。
-
-## 各語言的差異怎麼處理
-
-**不為每個語言開一份 skill。** 命名與訊息規則本身與語言無關，只有「要跑什麼指令」需要分 —— 那寫成同一份文件裡的語言分節：
-
-```
-git-rules/references/pre-pr-checklist.md
-  ## 通用
-  ## Laravel／PHP
-  ## .NET
-  ## JavaScript／TypeScript
-```
-
-新增語言就加一節，不動 skill 結構、不動分組。`semantic-release.md` 同樣以分節處理各語言的版本號寫入方式。
-
-## 接到新專案時要調整的地方
-
-- **`sync-deploy`** — 開始前要先確認該專案的發版 workflow 名稱、部署 workflow 名稱、部署分支，skill 內有對照表說明怎麼查。不要沿用別的專案的名稱。
-- **`git-rules`** — commit type 與 PR 標題格式是既定慣例，要改就改 skill 本體。
-- **`sonarqube-scan`** — `sonar-project.properties` 是各專案自己的檔案，第一次掃描時建立並進該專案版控。
+新增語言專屬的 skill 時，用**最小範圍**的技術 stack 當前綴（Filament 的東西叫 `filament-*` 而不是 `laravel-*`），因為那才精確描述「我什麼時候需要它」。
 
 ## 注意：`disable-model-invocation` 只在 Claude Code 生效
 
-`open-pr` 與 `sync-deploy` 用 `disable-model-invocation: true` 確保只有使用者明確輸入才會執行 —— 它們會 commit、push、觸發部署。
+`open-pr` 與 `sync-main` 用 `disable-model-invocation: true` 確保只有使用者明確輸入才會執行 —— 它們會 commit、push、刪分支。
 
 這個欄位是 Claude Code 擴充，**不在 Agent Skills 標準的六個欄位內**（`name`、`description`、`license`、`compatibility`、`metadata`、`allowed-tools`）。在其他工具上它不會生效，agent 有可能自行觸發。在那些環境使用時請留意。
