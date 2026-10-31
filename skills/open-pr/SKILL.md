@@ -15,6 +15,7 @@ allowed-tools:
   - Bash(git rebase:*)
   - Bash(git merge:*)
   - Bash(git reset:*)
+  - Bash(git merge-base:*)
   - Bash(git rev-parse:*)
   - Bash(git push:*)
   - Bash(gh pr create:*)
@@ -85,7 +86,7 @@ add 前確認沒有不該進版控的檔案（本機設定、暫存腳本、`.en
 git rev-parse --verify --quiet @{upstream}   # 有輸出＝已推送過
 ```
 
-- **無輸出** → 該壓就壓：`git rebase -i origin/main`。非互動環境改用 `git reset --soft origin/main` 後重新 commit
+- **無輸出** → 該壓就壓：`git rebase -i origin/main`。非互動環境改用 `git reset --soft "$(git merge-base HEAD origin/main)"` 後重新 commit（不可直接 reset 到 `origin/main`，會把 main 新增的改動反向帶進 commit）
 - **有輸出** → 維持原歷史，不整理
 
 ## 5. 對齊最新 main
@@ -96,6 +97,8 @@ git rev-parse --verify --quiet @{upstream}   # 有輸出＝已推送過
 - **有 upstream** → `git merge --no-edit origin/main`（rebase 會被 non-fast-forward 拒絕）
 
 有衝突一律 `--abort` 並停下回報，不自行解衝突。
+
+對齊帶進新 commit 時，回步驟 3 重跑品質檢查，通過才 push。
 
 ## 6. Push
 

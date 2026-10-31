@@ -8,8 +8,10 @@
 
 ```bash
 ls .github/workflows/
-grep -E 'run:' -A3 .github/workflows/*.yml
+grep -rnE '^on:|pull_request|run:' -A3 .github/workflows/   # .yml、.yaml 都包含
 ```
+
+只取 `on:` 含 `pull_request` 的 workflow，且只複製唯讀驗證指令（lint、型別、測試、build）。部署、發佈、migration、需要 secrets 的 job 不跑。
 
 CI 常只呼叫一個 aggregate 指令（`composer ci:check`、`npm run ci`、`make check`），跑那一個就好，不要拆開。
 
@@ -26,12 +28,17 @@ cat Makefile justfile Taskfile.yml 2>/dev/null
 
 **3. 設定檔存在就代表該工具要跑** —— `phpstan.neon`、`pint.json`、`eslint.config.js`、`tsconfig.json`、`vitest.config.ts`、`playwright.config.ts`。有設定檔但 script 沒涵蓋多半是漏了，回報一句。
 
-**4. 都找不到才用預設值**，並在回報中標明是推測的：
+**4. 都找不到才用預設值**，並在回報中標明是推測的。只跑專案已安裝或有設定檔的工具：
 
-| 生態 | 預設 |
-|---|---|
-| Laravel／PHP | `php artisan test`、`vendor/bin/pint --test`、`vendor/bin/phpstan analyse` |
-| Node／TS | `npm test`、`npm run lint`、`npx tsc --noEmit` |
+| 生態 | 預設 | 前提 |
+|---|---|---|
+| Laravel／PHP | `php artisan test` | 有 `artisan` |
+| | `vendor/bin/pint --test` | 有 `vendor/bin/pint` |
+| | `vendor/bin/phpstan analyse` | 有 `vendor/bin/phpstan` |
+| Node／TS | `npm test`、`npm run lint` | `package.json` 的 `scripts` 有對應項目 |
+| | `npx tsc --noEmit` | 有 `tsconfig.json` |
+
+前提不符就不跑，不要硬跑沒定義的 script。什麼都找不到就回報「專案未定義檢查」。
 
 ## 昂貴的檢查
 
