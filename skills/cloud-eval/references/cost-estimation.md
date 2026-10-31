@@ -15,6 +15,7 @@
 | 資料庫規格與儲存（GB） | | | | |
 | 物件儲存（GB）與請求數 | | | | |
 | 日誌量（GB／月） | | | | |
+| （Cloudflare）每次請求的 CPU 毫秒、D1 每月讀寫列數、KV／R2／Queues 操作次數 | | | | |
 
 - MAU 換算請求數要寫出換算方式，例如「每位 MAU 每月 20 次造訪 × 每次 30 個請求」。換算係數是假設，標出來。
 - 三個情境只改使用量，不改架構。架構不同就是不同候選。
@@ -76,6 +77,23 @@ for name, s in SCENARIOS.items():
 - [ ] 寄信服務
 - [ ] 技術支援方案
 - [ ] 免費額度到期後的價格
+
+**Cloudflare 特有的常漏項目**（只在候選含 Cloudflare 時檢查）：
+
+- [ ] 帳號層級的月費底價（Workers Paid）：整個帳號只算一次，不要每個專案各算一次
+- [ ] 免費額度的單位：有些是每日、有些是每月，換算成同一個月再比
+- [ ] 請求數的計法：Workers 靜態資源請求、快取命中、service binding、WebSocket 連線是否計入，照 Workers 價格頁的腳註
+- [ ] CPU 時間：等待網路與資料庫的時間不計入，但要用實際 CPU 毫秒估，不要用牆鐘時間
+- [ ] D1：以列讀取、列寫入、儲存計費；每個查詢實際計入的列數，照價格頁的定義估
+- [ ] R2：Class A、Class B 操作費、Infrequent Access 的資料取回費；Standard 的出站流量免費，但接到其他計費服務仍可能產生費用
+- [ ] Durable Objects：請求、持續時間、儲存操作分開計；WebSocket 長連線的持續時間
+- [ ] Queues、Workflows、KV：各自的操作次數（讀、寫、刪、列）
+- [ ] Workers Logs、Logpush：日誌量與保存期的費用
+- [ ] Containers、Workers AI、Vectorize 等：依各自價格頁的單位（vCPU 時間、神經元、向量維度）
+- [ ] 其他需要付費方案的功能：自訂網域的企業功能、Data Localization Suite（企業方案附加功能）、Cache Reserve 等，確認候選用到的功能在哪個方案
+- [ ] 出站流量：Workers、R2、D1 價格頁寫明不收；Containers 的出站流量要收費，且依地區分價（含台灣），不可套用「Cloudflare 不收出站流量」
+
+以上每項的計法與單價都要照價格頁查證；Cloudflare 沒有官方計算機，用價格頁的計算範例核對公式。
 
 ## 5. 三情境與預算
 

@@ -4,25 +4,22 @@
     "name": "shianglin17"
   },
   "metadata": {
-    "description": "Agent skills for personal projects: a Git pull request workflow and cloud architecture evaluation.",
-    "version": "2.1.0"
+    "description": "Agent skills for personal projects: pull request review verification and cloud architecture evaluation (AWS, Google Cloud, Cloudflare).",
+    "version": "3.0.0"
   },
   "plugins": [
     {
-      "name": "gitflow",
-      "description": "Git workflow for personal projects: branch and commit conventions, opening PRs, verifying review findings, and wrapping up after a merge. Language-agnostic.",
+      "name": "review",
+      "description": "Verifies pull request review findings from automated reviewers or humans before changing any code. Language-agnostic.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/git-rules",
-        "./skills/open-pr",
-        "./skills/verify-review-findings",
-        "./skills/sync-main"
+        "./skills/verify-review-findings"
       ]
     },
     {
       "name": "cloud",
-      "description": "Cloud architecture evaluation for AWS and Google Cloud: requirements discovery, service selection, cost estimates, and cross-cloud comparison backed by official sources.",
+      "description": "Cloud architecture evaluation for AWS, Google Cloud, and Cloudflare: requirements discovery, service selection, cost estimates, and cross-cloud comparison backed by official sources.",
       "source": "./",
       "strict": false,
       "skills": [
