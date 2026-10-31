@@ -4,13 +4,13 @@
     "name": "shianglin17"
   },
   "metadata": {
-    "description": "個人專案的 agent skills。語言無關的用途以功能命名，語言專屬的以原生語言命名。",
-    "version": "2.0.0"
+    "description": "Agent skills for personal projects: a Git pull request workflow and cloud architecture evaluation.",
+    "version": "2.1.0"
   },
   "plugins": [
     {
       "name": "gitflow",
-      "description": "個人專案的 Git 工作流：分支與 commit 規範、開 PR、核實 review 留言、合併後收尾。與語言無關",
+      "description": "Git workflow for personal projects: branch and commit conventions, opening PRs, verifying review findings, and wrapping up after a merge. Language-agnostic.",
       "source": "./",
       "strict": false,
       "skills": [
@@ -18,6 +18,15 @@
         "./skills/open-pr",
         "./skills/verify-review-findings",
         "./skills/sync-main"
+      ]
+    },
+    {
+      "name": "cloud",
+      "description": "Cloud architecture evaluation for AWS and Google Cloud: requirements discovery, service selection, cost estimates, and cross-cloud comparison backed by official sources.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/cloud-eval"
       ]
     }
   ]
