@@ -1,53 +1,69 @@
 # aaron-agent-skills
 
-個人專案開發流程的 agent skills。遵循 [Agent Skills](https://agentskills.io) 開放標準，可用於 Claude Code、Codex、OpenCode 等支援該格式的工具。
+Agent skills for personal projects, following the open [Agent Skills](https://agentskills.io) format. They work in Claude Code, Codex, OpenCode, and other tools that read `SKILL.md`.
 
-工作上的流程在 `menai-skills`，兩邊刻意不共用 —— 公司流程綁著票號體系、部署分支、semantic-release 與 SonarQube。
+個人專案用的 agent skills：Git PR 工作流，以及 AWS／GCP 雲端架構評估。內文以繁體中文為主。
 
 ## Skills
 
-一個 PR 的完整生命週期，四個互相引用，一起裝：
-
-| Skill | 用途 |
+| Skill | What it does |
 |---|---|
-| `git-rules` | 分支命名、commit 格式、PR 標題、merge 策略、歷史整理的界線 |
-| `open-pr` | 開分支 → 跑專案的品質檢查 → 整理 commit → 依模板開 PR |
-| `verify-review-findings` | 逐條核實 reviewer 的 finding，再決定要不要改 |
-| `sync-main` | PR 合併後更新 main、清理分支、回報 CI |
+| [`git-rules`](skills/git-rules/SKILL.md) | Git conventions: branch names, Conventional Commits, PR titles, merge strategy, when history may be rewritten. |
+| [`open-pr`](skills/open-pr/SKILL.md) | Opens a PR: branch from main, run the project's own checks, tidy unpushed commits, fill the PR template. |
+| [`verify-review-findings`](skills/verify-review-findings/SKILL.md) | Verifies PR review findings one by one before changing any code. |
+| [`sync-main`](skills/sync-main/SKILL.md) | Wraps up after a merge: update local main, delete merged branches, report CI. No deployment. |
+| [`cloud-eval`](skills/cloud-eval/SKILL.md) | Evaluates AWS and GCP architectures: requirements discovery, service selection, cost estimates, cross-cloud comparison, all backed by official sources. |
 
-**不含部署。** 部署分支、發版工具、環境設定各專案差異太大，寫成通用 skill 只會逼你每接一個新專案就先改 skill 本體。
+The four Git skills reference each other. Install them together.
 
-## 安裝
+`open-pr` and `sync-main` set `disable-model-invocation: true` because they commit, push, and delete branches. This field only works in Claude Code. Other tools may trigger them on their own.
+
+## Install
+
+### With `npx skills` (any supported agent)
 
 ```bash
-npx skills add shianglin17/aaron-agent-skills -a claude-code -a codex -a opencode
+# all skills, user-level
+npx skills add shianglin17/aaron-agent-skills -g
+
+# pick agents or skills
+npx skills add shianglin17/aaron-agent-skills -g -a claude-code -a codex
+npx skills add shianglin17/aaron-agent-skills -g --skill cloud-eval
+
+# list without installing
+npx skills add shianglin17/aaron-agent-skills --list
 ```
 
-skill 會落在 `.agents/skills/`（實體檔案）與各工具自己的目錄（Claude Code 是 `.claude/skills/`，symlink 指向前者）。
+Drop `-g` to install into the current project instead.
 
-單人專案建議把 `.agents/` 與 `skills-lock.json` 進版控，換機器不必重裝；多人專案才 gitignore 掉、各自跑 `npx skills experimental_install`。
+### As a Claude Code plugin marketplace
 
-Claude Code 另有 plugin 路徑（只在 Claude Code 有效）：
-
-```bash
+```text
 /plugin marketplace add shianglin17/aaron-agent-skills
 /plugin install gitflow@aaron-skills
+/plugin install cloud@aaron-skills
 ```
 
-## 兩個設計決定
+| Plugin | Skills |
+|---|---|
+| `gitflow` | `git-rules`, `open-pr`, `verify-review-findings`, `sync-main` |
+| `cloud` | `cloud-eval` |
 
-**檢查指令從專案讀，不寫死在 skill 裡。** 順序是 `.github/workflows/` → `composer.json` / `package.json` scripts → 設定檔存在性 → 才是預設值。寫死一份跨語言對照表會漏 —— Laravel + Inertia 專案照著「PHP 就跑 `artisan test` + `pint`」會漏掉型別檢查與整個前端，而 CI 都會跑。
+## `cloud-eval` at a glance
 
-**檢查往前挪到 commit 之前。** 團隊 repo 裡 reviewer 是最後一道防線，個人 repo 沒有，所以 `open-pr` 檢查失敗就不繼續。
+```text
+/cloud-eval aws|gcp|compare [project or topic]
+```
 
-## skill 命名
+1. Ask about constraints before proposing anything.
+2. Shortlist candidates.
+3. Verify prices, quotas, GA status, and regional availability against official sources.
+4. Estimate monthly cost in low, likely, and high scenarios, with a script.
+5. Compare and list risks.
+6. Write a report in Traditional Chinese, conclusion first.
 
-改名的代價遠高於改分組：分組只要改 `marketplace.json` 一行，改名要動所有互相引用處，而且 `npx skills update` 遇到改名只做一半 —— 它會警告舊 skill 在 upstream 不存在，但不會裝上新名字的那個。
+It works best with the [AWS Knowledge MCP server](https://knowledge-mcp.global.api.aws), and falls back to fetching official docs when the server is not installed. It links to the official skills in [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) and [google/skills](https://github.com/google/skills) but does not copy them.
 
-所以**名稱一次想好，分組可以先粗**。目前全部在 `gitflow` 一組，等某領域多到 5、6 個再拆，不預先開空分組。語言專屬的 skill 用最小範圍的技術當前綴（`filament-*` 而非 `laravel-*`）。
+## License
 
-## `disable-model-invocation` 只在 Claude Code 生效
-
-`open-pr` 與 `sync-main` 用它確保只有使用者明確輸入才執行 —— 它們會 commit、push、刪分支。
-
-這是 Claude Code 擴充，不在 Agent Skills 標準的六個欄位內（`name`、`description`、`license`、`compatibility`、`metadata`、`allowed-tools`）。其他工具上不生效，agent 有可能自行觸發。
+[MIT](LICENSE)
