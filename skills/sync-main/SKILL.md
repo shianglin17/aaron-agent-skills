@@ -1,7 +1,6 @@
 ---
 name: sync-main
-description: PR 合併之後的收尾：確認 PR 真的進了 main、更新本地 main、清掉合併完的分支、回報 main 上的 CI 結果。不負責部署。
-when_to_use: 使用者說「我 merge 了」「同步一下 main」「PR 合併了」，或剛在 GitHub 上 merge PR 之後。要開 PR 請改用 open-pr。
+description: "Wraps up after a pull request is merged: confirms the PR landed on main, fast-forwards local main, deletes merged local branches, and reports CI on main. Does not deploy. Use when the user says 「我 merge 了」「同步一下 main」「PR 合併了」 or right after merging on GitHub. To open a PR, use open-pr."
 argument-hint: "[PR 編號]"
 disable-model-invocation: true
 allowed-tools:

@@ -1,6 +1,6 @@
 ---
 name: verify-review-findings
-description: 核實 PR 上自動 reviewer（Codex、Copilot、/code-review 等）留下的 finding，逐條驗證後再決定要不要改。使用者貼上 review 留言、或說「看看 PR 上的 review」「幫我核實 codex 的留言」時使用。也適用於人類 reviewer 的留言。
+description: "Verifies pull request review findings one by one, from automated reviewers (Codex, Copilot, /code-review) or humans, before deciding whether to change code. Use when the user pastes review comments or says 「看看 PR 上的 review」「幫我核實 codex 的留言」."
 ---
 
 # Verify Review Findings

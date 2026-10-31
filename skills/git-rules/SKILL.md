@@ -1,6 +1,6 @@
 ---
 name: git-rules
-description: 個人專案的 Git 規範：分支命名、conventional commit、PR 標題格式、commit 歷史整理。用於檢查或修正分支／commit／PR 標題是否合規，或為新 repo 建立 PR 模板。與語言無關。
+description: "Defines Git conventions for personal projects: branch names, Conventional Commits messages and scopes, PR titles, merge strategy, and when history may be rewritten. Use when checking or fixing a branch name, commit message, or PR title, choosing a merge strategy, or adding a PR template to a new repo. Language-agnostic. 分支命名、commit 格式、PR 標題、merge 策略。"
 ---
 
 # Git Rules
@@ -104,5 +104,4 @@ gh api -X PATCH repos/{owner}/{repo} \
 
 ## 檔案
 
-- `references/quality-checks.md` — 怎麼找出這個專案該跑的檢查
 - `assets/pr-template.md` — PR 模板，複製到 `.github/pull_request_template.md`

@@ -1,7 +1,6 @@
 ---
 name: open-pr
-description: 把當前工作成果從最新 main 開分支、跑專案的品質檢查、整理 commit、push，並依專案的 PR 模板開好 PR，最後回傳 PR 連結交給使用者自行 review/merge。
-when_to_use: 使用者說「開 PR」「送 PR」「幫我提 PR」「這樣可以開 PR 了」，或改動完成要進入審查流程時。PR 合併之後的收尾請改用 sync-main。
+description: "Opens a pull request for the current work: branches from the latest main, runs the project's own quality checks, tidies unpushed commits, pushes, and fills the repo's PR template, then returns the PR link for the user to review and merge. Use when the user says 「開 PR」「送 PR」「幫我提 PR」 or a change is ready for review. For cleanup after a merge, use sync-main."
 argument-hint: "[PR 標題或補充說明；--draft 開草稿 PR]"
 disable-model-invocation: true
 allowed-tools:
@@ -63,7 +62,7 @@ git log --oneline origin/main..HEAD   # 已完成但還沒開 PR 的 commit
 
 **不可略過。** 個人專案沒有同事擋，CI 紅了才發現等於白開一次 PR。
 
-依 `git-rules/references/quality-checks.md` 找出專案實際定義的指令，跑唯讀版。
+依 [references/quality-checks.md](references/quality-checks.md) 找出專案實際定義的指令，跑唯讀版。
 
 - 失敗且是本次改動造成 → 修掉，修正併入本次 commit
 - 失敗但是既有問題 → **停下回報**，不要默默擴大範圍
@@ -113,7 +112,7 @@ ls .github/pull_request_template.md .github/PULL_REQUEST_TEMPLATE.md \
    .github/PULL_REQUEST_TEMPLATE/*.md docs/pull_request_template.md 2>/dev/null
 ```
 
-找到就照它的章節填，不自創欄位；沒有就用 `git-rules/assets/pr-template.md` 的結構，並建議把它加進這個 repo。
+找到就照它的章節填，不自創欄位；沒有就用 `git-rules` skill 的 `assets/pr-template.md` 結構，並建議把它加進這個 repo。
 
 - **描述**：寫改了什麼、為什麼，給 reviewer 看，不要複製 commit 清單
 - **驗證清單**：只勾步驟 3 真的跑過且通過的，略過的說明原因
