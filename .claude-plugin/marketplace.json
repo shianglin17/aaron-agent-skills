@@ -4,38 +4,29 @@
     "name": "shianglin17"
   },
   "metadata": {
-    "description": "agent skills 集合。語言無關的用途以功能命名，語言專屬的以原生語言命名。",
-    "version": "1.0.0"
+    "description": "Agent skills for personal projects: a Git pull request workflow and cloud architecture evaluation.",
+    "version": "2.1.0"
   },
   "plugins": [
     {
       "name": "gitflow",
-      "description": "Git 工作流：分支命名與 commit 規範、開 PR、核實 review 留言、合併後同步部署分支。與語言無關",
+      "description": "Git workflow for personal projects: branch and commit conventions, opening PRs, verifying review findings, and wrapping up after a merge. Language-agnostic.",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/git-rules",
         "./skills/open-pr",
-        "./skills/sync-deploy",
-        "./skills/verify-review-findings"
+        "./skills/verify-review-findings",
+        "./skills/sync-main"
       ]
     },
     {
-      "name": "code-quality",
-      "description": "程式碼品質：用 Docker 起本機 SonarQube 掃描專案。與語言無關",
+      "name": "cloud",
+      "description": "Cloud architecture evaluation for AWS and Google Cloud: requirements discovery, service selection, cost estimates, and cross-cloud comparison backed by official sources.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/sonarqube-scan"
-      ]
-    },
-    {
-      "name": "php",
-      "description": "PHP 生態的 skill。目前只有 Filament 後台操作手冊；框架或套件專屬的以最小範圍當名稱前綴",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/filament-operating-manual"
+        "./skills/cloud-eval"
       ]
     }
   ]

@@ -1,15 +1,15 @@
 ---
 name: verify-review-findings
-description: 核實 PR 上自動 reviewer（Codex、Copilot 等）留下的 finding，逐條驗證後再決定要不要改。使用者貼上 review 留言、或說「看看 PR 上的 review」「幫我核實 codex 的留言」時使用。也適用於人類 reviewer 的留言。
+description: "Verifies pull request review findings one by one, from automated reviewers (Codex, Copilot, /code-review) or humans, before deciding whether to change code. Use when the user pastes review comments or says 「看看 PR 上的 review」「幫我核實 codex 的留言」."
 ---
 
 # Verify Review Findings
 
 ## 核心原則
 
-**先核實，再決定。不要照著建議直接改。**
+**先核實，再決定。不要照著建議直接改。** 照單全收等於把判斷權交給一個沒跑過你的程式碼的工具。
 
-自動 reviewer 產出的 finding 有三種常見狀態，處置完全不同：
+finding 有四種常見狀態，處置完全不同：
 
 | 狀態 | 處置 |
 |---|---|
@@ -24,12 +24,23 @@ description: 核實 PR 上自動 reviewer（Codex、Copilot 等）留下的 find
 
 ### 1. 取得完整的 finding
 
-review 留言多半是 inline comment，`gh pr view` 看不到，要用 API：
+review 留言散在三個不同的 API endpoint，只撈一個會漏：
 
 ```bash
-gh api repos/<owner>/<repo>/pulls/<PR>/comments \
+# 1. inline comment（掛在特定行上的，`gh pr view` 看不到）
+gh api repos/{owner}/{repo}/pulls/<PR>/comments \
   --jq '.[] | "═══ \(.path):\(.line // .original_line)  [\(.user.login)]\n\(.body)\n"'
+
+# 2. review 本體的總結留言（Codex 的整體評語常在這裡）
+gh api repos/{owner}/{repo}/pulls/<PR>/reviews \
+  --jq '.[] | select(.body != "") | "═══ [\(.user.login)] \(.state)\n\(.body)\n"'
+
+# 3. PR 討論串（bot 有時直接留在這）
+gh api repos/{owner}/{repo}/issues/<PR>/comments \
+  --jq '.[] | "═══ [\(.user.login)]\n\(.body)\n"'
 ```
+
+`{owner}/{repo}` 是 `gh` 的 placeholder，會自動代入當前 repo，不用手打。
 
 使用者貼上的片段可能不完整，仍要撈一次完整清單，避免漏掉其他條目。
 
@@ -41,7 +52,7 @@ gh api repos/<owner>/<repo>/pulls/<PR>/comments \
 2. **不能實測就讀原始碼**，包含 vendor 裡的框架與套件實作。
 3. **都不行才推論**，並在回報時標明「這是推論，不是實測」。
 
-實測的例子（本 skill 誕生時的實際案例）：
+實測的例子：
 
 ```bash
 # finding 說「parent revision 的 composer.lock 已經是過期狀態」
@@ -64,16 +75,10 @@ rm -rf "$T"
 
 如果推翻了自己先前的說法，直接更正，不要含糊帶過。
 
-## 反模式
-
-- ❌ 看到 P1/P2 badge 就照建議改
-- ❌ 因為是機器產生的就整批忽略
-- ❌ 把 finding 的敘述當成已驗證的事實轉述給使用者
-- ❌ 在核實的同時就順手改掉（使用者可能只要核實）
-- ❌ 為了修一條 finding 而擴大 PR 範圍，卻沒有說
-
 ## 護欄
 
+- 不因 P1/P2 badge 就照建議改，也不因為是機器產生的就整批忽略
+- 不把 finding 的敘述當成已驗證的事實轉述給使用者
 - 使用者說「先核實」就**只核實，不要改**
-- 修正只處理本次 PR 造成的缺陷；既有問題先問
+- 修正只處理本次 PR 造成的缺陷；既有問題先問，不擴大 PR 範圍
 - 不因單一 finding 就 force push 或改寫已推送的歷史
