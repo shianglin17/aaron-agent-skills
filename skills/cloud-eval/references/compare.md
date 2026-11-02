@@ -1,11 +1,32 @@
 # 跨雲比較
 
-`compare` 模式的步驟 5 用。目標：各家在同樣的條件下比。預設比 AWS 與 GCP；使用者要比 Cloudflare 時，三家一起比，或兩兩比較。
+`compare` 模式用：步驟 2 查〈服務對照〉，步驟 5 照〈公平性規則〉填〈比較矩陣〉。目標：各家在同樣的條件下比。預設比 AWS 與 GCP；使用者要比 Cloudflare 時，三家一起比，或兩兩比較。
+
+比到 Cloudflare 時，另讀 [cloudflare.md](cloudflare.md) 的〈跨雲比較注意事項〉。
+
+## 服務對照
+
+列候選時用來找各家的對應服務。只列名稱；文件連結與官方 skill 見各雲檔。名稱相近不代表功能、限制、計價相同，逐項查證。
+
+| 領域 | AWS | GCP | Cloudflare |
+|---|---|---|---|
+| 虛擬機與輕量主機 | EC2、Lightsail | Compute Engine | 無（沒有 VM） |
+| 容器與應用平台 | ECS、Fargate、EKS、Elastic Beanstalk | Cloud Run、GKE | Workers＋靜態資源、Containers |
+| 無伺服器函式 | Lambda | Cloud Run functions | Workers、Workflows |
+| 關聯式資料庫 | RDS、Aurora | Cloud SQL、AlloyDB | D1、Hyperdrive（連既有 PostgreSQL／MySQL） |
+| NoSQL 與快取 | DynamoDB、ElastiCache | Firestore、Memorystore | KV、Durable Objects、Workers Cache |
+| 物件儲存與 CDN | S3、CloudFront | Cloud Storage、Cloud CDN | R2、Cache／CDN |
+| 網路與負載平衡 | VPC、NAT gateway、ELB | VPC、Cloud NAT、Cloud Load Balancing | Load Balancing、Tunnel、DNS |
+| 身分與權限 | IAM | IAM | 帳號權限、Cloudflare One |
+| 可觀測性 | CloudWatch | Cloud Logging、Cloud Monitoring | Workers Observability |
+| 訊息佇列 | SQS | Pub/Sub | Queues |
+| 資料分析 | Athena、Redshift | BigQuery | Analytics Engine、R2 SQL |
+| 生成式 AI | Bedrock | Vertex AI 生成式 AI | Workers AI、AI Gateway、Vectorize |
 
 ## 公平性規則
 
 1. **同一組使用量假設。** 各家用同一張使用量表、同樣的三情境。
-2. **同等級的區域。** 預設都選離使用者最近、且所需服務都有提供的區域。台灣使用者先查 AWS、GCP 的台灣區域；某服務在台灣區域沒有，各家都記下替代區域與延遲影響。Cloudflare 沒有區域選擇，改比資料位置的控制能力（見〈Cloudflare 對照注意事項〉）。
+2. **同等級的區域。** 預設都選離使用者最近、且所需服務都有提供的區域。台灣使用者先查 AWS、GCP 的台灣區域；某服務在台灣區域沒有，各家都記下替代區域與延遲影響。Cloudflare 沒有區域選擇，改比資料位置的控制能力（見 [cloudflare.md](cloudflare.md)〈跨雲比較注意事項〉）。
 3. **同等級的託管程度。** 託管對託管、自架對自架。不要拿 AWS 的 VM 自架資料庫比 GCP 的全託管資料庫。
 4. **同樣的可用性。** 單可用區對單可用區，多可用區對多可用區。
 5. **同樣的計價方式。** 主比較用隨需（on-demand）牌價。承諾折扣、Spot、credits 另列一欄，不混進主比較。
@@ -31,22 +52,6 @@
 | 鎖定程度與遷出成本 | | |  | |
 | 既有技術棧相容性 | | |  | |
 | 交付與交接難度（接案時） | | |  | |
-
-## Cloudflare 對照注意事項
-
-Cloudflare 的計價模型與 AWS、GCP 不同，直接並排單價會失真。比較時照下列處理；所有數字仍要照 [verification.md](verification.md) 查證，這裡不列任何價格。
-
-| 項目 | 注意事項 |
-|---|---|
-| 計費單位 | Workers 以請求數與 CPU 時間計費，不計等待 I/O 的時間；AWS Lambda、GCP Cloud Run 的計費維度要另外查證（通常含執行時間與配置的資源）。換算成同一組使用量（請求數、每次請求的 CPU 毫秒），不要用「每百萬次呼叫單價」直接比 |
-| 出站流量 | Workers、R2、D1 的價格頁寫明不收出站流量費，但 Containers 要收（依地區分價）；AWS、GCP 的出站流量費要查證後列出。流量大的工作負載要把出站流量費列為獨立一行，各家都算 |
-| 帳號層級底價 | Workers Paid 有每月最低收費，屬於帳號層級、整個帳號只算一次。小用量時它佔大部分費用，大用量時可忽略；用三情境呈現 |
-| 免費額度 | 免費額度的單位各產品不同（每日、每月、每次呼叫）。照價格頁的單位換算，免費額度與付費方案分開列 |
-| 區域與資料位置 | Cloudflare 沒有區域選擇。資料落地要求（例如資料必須留在台灣）要查產品的 location hint、jurisdiction，以及 Data Localization Suite 是否為企業方案附加功能。查不到就在矩陣標「未驗證」，不要假設等同台灣區域 |
-| 沒有 VM | 需要長時間執行的行程、非 HTTP 協定、Linux 套件，要用 Containers 或留在 AWS、GCP。這種情況寫在〈不可比的差異〉，不要把 Workers 和 VM 硬比 |
-| 資料庫模型 | D1 是採用 SQLite SQL 語意的託管資料庫，以列讀寫計費；與 RDS、Cloud SQL 的託管 MySQL／PostgreSQL 在引擎、容量上限、交易與擴充方式不同。比較前先確認需求是否落在 D1 的限制內（`d1/platform/limits`），超過就改比 Hyperdrive 連既有資料庫 |
-| 鎖定程度 | Workers 的繫結（R2、D1、KV、Durable Objects）是 Cloudflare 專有 API，遷出成本通常高於標準容器。R2 提供 S3 相容 API，物件層的遷出成本較低；各項是否成立要查證 |
-| 官方資料偏向 | `cloudflare` skill 傾向推薦 Cloudflare 產品。把它的產品選擇當候選清單，不當結論 |
 
 ## 加權評分（選用）
 
