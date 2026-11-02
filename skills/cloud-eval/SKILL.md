@@ -1,6 +1,6 @@
 ---
 name: cloud-eval
-description: "Evaluates cloud architectures on AWS, Google Cloud (GCP), and Cloudflare (Workers, R2, D1, KV, Durable Objects) before anything is built: discovers requirements, shortlists services, verifies pricing, quotas, GA status and regional availability against official sources, estimates monthly cost in three scenarios, and writes a sourced report. Use for service selection, cost estimates, architecture reviews, or cross-cloud comparison, not for deploying or operating resources. 雲端評估、選型、估價、架構審查、AWS GCP Cloudflare 比較。"
+description: "Evaluates AWS, Google Cloud (GCP), and Cloudflare (Workers, R2, D1, KV, Durable Objects) architectures before building: service selection, verified pricing, quotas and regions, cost estimates, architecture review, cross-cloud comparison. Not for deploying. 雲端評估、選型、估價、架構審查、AWS GCP Cloudflare 比較。"
 argument-hint: "[aws|gcp|cloudflare|compare] [專案或主題]"
 ---
 
@@ -53,15 +53,15 @@ argument-hint: "[aws|gcp|cloudflare|compare] [專案或主題]"
 
 ### 步驟 2：列候選
 
-- 每家列 2–3 個候選架構，涵蓋不同的託管程度，例如：單機或輕量主機 → 容器託管 → 全託管服務組合。Cloudflare 沒有主機層，常見的光譜是：Workers 加靜態資源 → 加上儲存與資料庫繫結（R2、D1、KV） → 加上有狀態協調（Durable Objects、Queues、Workflows）。
+- 每家列 2–3 個候選架構，涵蓋不同的託管程度，例如：單機或輕量主機 → 容器託管 → 全託管服務組合。雲檔另有光譜時照雲檔，例如 Cloudflare 沒有主機層。
 - 一定要有一個「最簡單可行」的候選。
 - 每個候選寫一行理由，連回步驟 1 的哪個限制。
 - 不符合硬限制（預算上限、資料落地、區域）的候選直接淘汰，寫出淘汰原因。
-- 服務的官方起點查下面的〈領域路由〉。
+- 服務的文件起點與官方 skill 查該雲檔，見下面的〈領域路由〉。`compare` 模式用 [references/compare.md](references/compare.md) 的〈服務對照〉找各家的對應服務。
 
 ### 步驟 3：逐項查證
 
-讀 [references/verification.md](references/verification.md)。
+讀 [references/verification.md](references/verification.md) 與該雲檔。
 
 - 把候選裡每個事實宣稱列進證據表：宣稱、來源 URL、查詢日期、狀態。
 - 事實宣稱包括：價格、配額、GA 狀態、區域可用性、服務限制。
@@ -79,7 +79,7 @@ argument-hint: "[aws|gcp|cloudflare|compare] [專案或主題]"
 
 ### 步驟 5：比較與風險
 
-- 逐個候選檢查 Well-Architected 六面向：營運、安全、可靠性、效能、成本、永續。官方框架見 [references/upstream-map.md](references/upstream-map.md)。Cloudflare 沒有同名框架，用六面向自行檢查，並參考其 [Reference Architectures](https://developers.cloudflare.com/reference-architecture/)。
+- 逐個候選檢查 Well-Architected 六面向：營運、安全、可靠性、效能、成本、永續。官方框架與替代做法見該雲檔。
 - 每個候選寫出主要風險與緩解方式，包括鎖定程度、團隊技能落差、維運人力。
 - `compare` 模式：讀 [references/compare.md](references/compare.md)，照公平性規則填比較矩陣。
 
@@ -108,37 +108,28 @@ argument-hint: "[aws|gcp|cloudflare|compare] [專案或主題]"
 
 ## 4. 領域路由
 
-先查 [references/upstream-map.md](references/upstream-map.md) 找對應的官方 skill；文件起點如下。查法見 [references/verification.md](references/verification.md)。
+評估哪家雲，就讀哪個雲檔。雲檔包含：查證管道、服務文件起點與官方 skill、各類事實去哪查、價格來源、計價注意事項。
 
-| 領域 | AWS | GCP | Cloudflare |
-|---|---|---|---|
-| 虛擬機與輕量主機 | [EC2](https://docs.aws.amazon.com/ec2/)、[Lightsail](https://docs.aws.amazon.com/lightsail/) | [Compute Engine](https://docs.cloud.google.com/compute/docs/overview) | 無（沒有 VM；需要容器見下一列） |
-| 容器與應用平台 | [ECS／Fargate](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html)、[EKS](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)、[Elastic Beanstalk](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html) | [Cloud Run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run)、[GKE](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview) | [Workers](https://developers.cloudflare.com/workers/)＋[靜態資源](https://developers.cloudflare.com/workers/static-assets/)、[Containers](https://developers.cloudflare.com/containers/) |
-| 無伺服器函式 | [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) | [Cloud Run functions](https://docs.cloud.google.com/run/docs/functions/comparison) | [Workers](https://developers.cloudflare.com/workers/)、[Workflows](https://developers.cloudflare.com/workflows/) |
-| 關聯式資料庫 | [RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html)、[Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html) | [Cloud SQL](https://docs.cloud.google.com/sql/docs/introduction)、[AlloyDB](https://docs.cloud.google.com/alloydb/docs/overview) | [D1](https://developers.cloudflare.com/d1/)、[Hyperdrive](https://developers.cloudflare.com/hyperdrive/)（連既有 PostgreSQL／MySQL） |
-| NoSQL 與快取 | [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html)、[ElastiCache](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/WhatIs.html) | [Firestore](https://docs.cloud.google.com/firestore/native/docs/overview)、[Memorystore](https://docs.cloud.google.com/memorystore/docs/redis/memorystore-for-redis-overview) | [KV](https://developers.cloudflare.com/kv/)、[Durable Objects](https://developers.cloudflare.com/durable-objects/)、[Workers Cache](https://developers.cloudflare.com/workers/cache/) |
-| 物件儲存與 CDN | [S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html)、[CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html) | [Cloud Storage](https://docs.cloud.google.com/storage/docs/introduction)、[Cloud CDN](https://docs.cloud.google.com/cdn/docs/overview) | [R2](https://developers.cloudflare.com/r2/)、[Cache／CDN](https://developers.cloudflare.com/cache/) |
-| 網路與負載平衡 | [VPC](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)、[NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html)、[ELB](https://docs.aws.amazon.com/elasticloadbalancing/) | [VPC](https://docs.cloud.google.com/vpc/docs/overview)、[Cloud NAT](https://docs.cloud.google.com/nat/docs/overview)、[Cloud Load Balancing](https://docs.cloud.google.com/load-balancing/docs/load-balancing-overview) | [Load Balancing](https://developers.cloudflare.com/load-balancing/)、[Tunnel](https://developers.cloudflare.com/tunnel/)、[DNS](https://developers.cloudflare.com/dns/) |
-| 身分與權限 | [IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) | [IAM](https://docs.cloud.google.com/iam/docs/overview) | [帳號權限](https://developers.cloudflare.com/fundamentals/manage-members/)、[Cloudflare One](https://developers.cloudflare.com/cloudflare-one/) |
-| 可觀測性 | [CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html) | [Cloud Logging](https://docs.cloud.google.com/logging/docs/overview)、[Cloud Monitoring](https://docs.cloud.google.com/monitoring/docs/monitoring-overview) | [Workers Observability](https://developers.cloudflare.com/workers/observability/) |
-| 訊息佇列 | [SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) | [Pub/Sub](https://docs.cloud.google.com/pubsub/docs/overview) | [Queues](https://developers.cloudflare.com/queues/) |
-| 資料分析 | [Athena](https://docs.aws.amazon.com/athena/latest/ug/what-is.html)、[Redshift](https://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html) | [BigQuery](https://docs.cloud.google.com/bigquery/docs/introduction) | [Analytics Engine](https://developers.cloudflare.com/analytics/analytics-engine/)、[R2 SQL](https://developers.cloudflare.com/r2-sql/) |
-| 生成式 AI | [Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html) | [Vertex AI 生成式 AI](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/overview) | [Workers AI](https://developers.cloudflare.com/workers-ai/)、[AI Gateway](https://developers.cloudflare.com/ai-gateway/)、[Vectorize](https://developers.cloudflare.com/vectorize/) |
-| 區域、配額、上市階段 | [區域服務清單](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/)、[Service Quotas](https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html) | [區域與可用區](https://docs.cloud.google.com/compute/docs/regions-zones)、[配額](https://docs.cloud.google.com/docs/quotas/overview)、[上市階段](https://docs.cloud.google.com/products/product-launch-stages) | [Workers 限制](https://developers.cloudflare.com/workers/platform/limits/)、[Data Localization](https://developers.cloudflare.com/data-localization/)；沒有選區域的概念，見 [verification.md](references/verification.md) |
-| 價格 | [價格總覽](https://aws.amazon.com/pricing/)、[Pricing Calculator](https://calculator.aws/) | [價格清單](https://cloud.google.com/pricing/list)、[Pricing Calculator](https://cloud.google.com/products/calculator) | [Workers 價格](https://developers.cloudflare.com/workers/platform/pricing/)、各產品 pricing 頁，見 [verification.md](references/verification.md) |
+| 雲 | 雲檔 |
+|---|---|
+| AWS | [references/aws.md](references/aws.md) |
+| Google Cloud | [references/gcp.md](references/gcp.md) |
+| Cloudflare | [references/cloudflare.md](references/cloudflare.md) |
 
-表外的領域：AWS 用 `aws___search_documentation` 搜；GCP 搜 `docs.cloud.google.com`；Cloudflare 用 `search_cloudflare_documentation` 搜。
+- 單雲模式：只讀該雲的雲檔。
+- `compare` 模式：讀每家要比的雲檔，再讀 [references/compare.md](references/compare.md)。
+- 雲檔的領域表沒有列到的服務：照雲檔寫的搜尋方式找。
 
 ## 5. 參考檔
 
 | 檔案 | 何時讀 |
 |---|---|
 | [references/discovery.md](references/discovery.md) | 步驟 1 |
+| [references/aws.md](references/aws.md)、[gcp.md](references/gcp.md)、[cloudflare.md](references/cloudflare.md) | 評估含該雲時，從步驟 2 起 |
 | [references/verification.md](references/verification.md) | 步驟 3，或任何要查證的時候 |
 | [references/cost-estimation.md](references/cost-estimation.md) | 步驟 4 |
-| [references/compare.md](references/compare.md) | `compare` 模式的步驟 5 |
+| [references/compare.md](references/compare.md) | `compare` 模式的步驟 2 與步驟 5 |
 | [references/report-template.md](references/report-template.md) | 步驟 6 |
-| [references/upstream-map.md](references/upstream-map.md) | 找官方 skill、Well-Architected 框架 |
 
 ## 6. 護欄
 

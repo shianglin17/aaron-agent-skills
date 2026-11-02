@@ -37,7 +37,7 @@
 - 「使用者在台灣」不等於「資料要留在台灣」。分開問第 6、7 題。
 - AWS、GCP 在台灣都有區域，但每項服務是否在台灣區域提供，要在步驟 3 逐項查證，不要假設。
 - 接案時，帳單常要開給客戶。問清楚雲端帳號開在誰名下。
-- 考慮 Cloudflare 時，「使用者在台灣」和「資料要留在台灣」要分開問：Cloudflare 沒有選區域的概念，資料位置的控制方式不同，見 [verification.md](verification.md) 與 [compare.md](compare.md)。
+- 考慮 Cloudflare 時，「使用者在台灣」和「資料要留在台灣」要分開問：Cloudflare 沒有選區域的概念，資料位置的控制方式不同，見 [cloudflare.md](cloudflare.md)。
 
 ## 接案與自家產品的差異
 
