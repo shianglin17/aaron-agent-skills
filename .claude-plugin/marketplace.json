@@ -4,8 +4,8 @@
     "name": "shianglin17"
   },
   "metadata": {
-    "description": "Agent skills for personal projects: pull request review verification and cloud architecture evaluation (AWS, Google Cloud, Cloudflare).",
-    "version": "3.0.0"
+    "description": "Agent skills for personal projects: pull request review verification and a single cloud entry for AWS, Google Cloud, and Cloudflare.",
+    "version": "4.0.0"
   },
   "plugins": [
     {
@@ -19,11 +19,11 @@
     },
     {
       "name": "cloud",
-      "description": "Cloud architecture evaluation for AWS, Google Cloud, and Cloudflare: requirements discovery, service selection, cost estimates, and cross-cloud comparison backed by official sources.",
+      "description": "One entry for AWS, Google Cloud, and Cloudflare: learn a service, evaluate and price options, design an architecture, and set up resources with Terraform.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/cloud-eval"
+        "./skills/cloud-architect"
       ]
     }
   ]
