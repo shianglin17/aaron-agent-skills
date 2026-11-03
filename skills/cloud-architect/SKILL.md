@@ -45,7 +45,7 @@ AWS、GCP、Cloudflare 的單一入口。分四個模式：了解服務、評估
 | 常見的坑 | |
 | 其他雲的對應服務 | 查 compare.md〈服務對照〉 |
 
-Aaron 要保存時，用 `log-knowledge` 存進 `~/aaron-hq/knowledge/`。
+Aaron 要保存時，用 `log` 存進 `~/aaron-hq/knowledge/`。
 
 ### eval：評估、選型、估價
 
