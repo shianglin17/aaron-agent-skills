@@ -2,10 +2,15 @@
 
 setup 模式用；任何模式要動雲端資源時都照這份。
 
-## CLI
+## 變更方式
 
-- CLI 只做唯讀操作：查狀態、列資源、看設定。
-- 建立、修改、刪除資源一律用 IaC，不用 CLI。
+| 情況 | 規則 |
+|---|---|
+| 資源由 Terraform 管理 | CLI 只做唯讀操作（查狀態、列資源、看設定）。所有變更一律走 Terraform，流程見〈執行〉。 |
+| 沒用 Terraform 的簡單情況 | 可以用 CLI 寫入，例如 `wrangler deploy`、`gcloud run deploy`。執行前先列出完整指令，等使用者確認。 |
+
+- 用 Terraform 的情況：多環境，或需要版本控管、可重現的設定。
+- 資源由 Terraform 管理時，不用 CLI 改動，避免產生 drift。
 
 ## IaC 工具
 
@@ -13,6 +18,8 @@ setup 模式用；任何模式要動雲端資源時都照這份。
 - 各雲原生 IaC 可以當對照；skill 名稱見雲檔的〈IaC〉列。
 
 ## 執行
+
+用 Terraform 時：
 
 1. 產生計畫檔，列出要新增、修改、刪除的資源：
    - 新增或修改：`terraform plan -out=tfplan`
