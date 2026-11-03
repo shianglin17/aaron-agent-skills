@@ -2,7 +2,7 @@
 
 Agent skills for personal projects, following the open [Agent Skills](https://agentskills.io) format. They work in Claude Code, Codex, OpenCode, and other tools that read `SKILL.md`.
 
-個人專案用的 agent skills：PR review 核實，以及 AWS／GCP／Cloudflare 的雲端單一入口。內文以繁體中文為主。
+個人專案用的 agent skills：PR review 核實、AWS／GCP／Cloudflare 的雲端單一入口，以及把既有系統做成架構說明站。內文以繁體中文為主。
 
 ## Skills
 
@@ -10,6 +10,7 @@ Agent skills for personal projects, following the open [Agent Skills](https://ag
 |---|---|
 | [`verify-review-findings`](skills/verify-review-findings/SKILL.md) | Verifies PR review findings one by one before changing any code. |
 | [`cloud-architect`](skills/cloud-architect/SKILL.md) | One entry for AWS, Google Cloud, and Cloudflare: learn a service, evaluate and price options, design an architecture, set up resources with Terraform. Facts come from official sources. |
+| [`architecture-site`](skills/architecture-site/SKILL.md) | Turns an existing codebase into a multi-page, diagram-led architecture site: one reader question per page, linked diagram and side panel, code line refs pinned to a commit. Ships a page skeleton and check scripts. |
 
 ## Install
 
@@ -35,12 +36,14 @@ Drop `-g` to install into the current project instead.
 /plugin marketplace add shianglin17/aaron-agent-skills
 /plugin install review@aaron-skills
 /plugin install cloud@aaron-skills
+/plugin install architecture@aaron-skills
 ```
 
 | Plugin | Skills |
 |---|---|
 | `review` | `verify-review-findings` |
 | `cloud` | `cloud-architect` |
+| `architecture` | `architecture-site` |
 
 ## `cloud-architect` at a glance
 

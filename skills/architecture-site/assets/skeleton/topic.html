@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>一則訊息怎麼走</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到主要內容</a>
+<nav class="topnav" id="site-nav" data-current="request" aria-label="架構說明站"></nav>
+
+<main id="main">
+  <header>
+    <h1>一則訊息怎麼走？</h1>
+    <p class="cap">使用者送出問題後，系統依序做 4 件事，最後把回答串流回去。點步驟看說明與程式碼位置。</p>
+    <dl class="facts">
+      <div><dt>步驟</dt><dd>4</dd></div>
+      <div><dt>呼叫模型</dt><dd>1 次<small>每則訊息</small></dd></div>
+      <div><dt>最慢的一步</dt><dd>產生回答</dd></div>
+    </dl>
+  </header>
+
+  <section aria-labelledby="h-flow">
+    <h2 id="h-flow">處理步驟</h2>
+    <div class="stage">
+      <figure class="fig" style="margin:0">
+        <div class="scroll">
+          <svg viewBox="0 0 880 250" role="group" aria-labelledby="flow-title flow-desc" data-panel="panel-flow" data-default="s-read">
+            <title id="flow-title">一則訊息的處理步驟</title>
+            <desc id="flow-desc">讀對話紀錄、檢索、產生回答、寫回紀錄，依序執行。重複問題直接回快取的分支尚未實作。</desc>
+            <defs>
+              <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0 0L10 5L0 10z"/></marker>
+            </defs>
+            <g class="ed ours" data-key="e-1" data-link="s-read s-search" tabindex="0" role="button" aria-label="連線：讀紀錄到檢索">
+              <path class="hit" d="M180 78H230"/><path class="ln" d="M180 78H228" marker-end="url(#arr2)"/>
+            </g>
+            <g class="ed ai" data-key="e-2" data-link="s-search s-answer" tabindex="0" role="button" aria-label="連線：檢索到產生回答">
+              <path class="hit" d="M390 78H440"/><path class="ln" d="M390 78H438" marker-end="url(#arr2)"/>
+            </g>
+            <g class="ed ours" data-key="e-3" data-link="s-answer s-write" tabindex="0" role="button" aria-label="連線：產生回答到寫回紀錄">
+              <path class="hit" d="M600 78H650"/><path class="ln" d="M600 78H648" marker-end="url(#arr2)"/>
+            </g>
+            <g class="ed plan" data-key="e-cache" data-link="s-search s-cache" tabindex="0" role="button" aria-label="連線：檢索到快取，待決定">
+              <path class="hit" d="M310 106V160"/><path class="ln" d="M310 106V158" marker-end="url(#arr2)"/>
+            </g>
+
+            <g class="nd ext" data-key="s-read" tabindex="0" role="button" aria-label="步驟 1：讀對話紀錄"><rect x="20" y="50" width="160" height="56" rx="8"/><text class="nm" x="100" y="74" text-anchor="middle">1 讀對話紀錄</text><text class="sb" x="100" y="92" text-anchor="middle">資料庫</text></g>
+            <g class="nd ours" data-key="s-search" tabindex="0" role="button" aria-label="步驟 2：檢索"><rect x="230" y="50" width="160" height="56" rx="8"/><text class="nm" x="310" y="74" text-anchor="middle">2 檢索</text><text class="sb" x="310" y="92" text-anchor="middle">hybrid + rerank</text></g>
+            <g class="nd ai" data-key="s-answer" tabindex="0" role="button" aria-label="步驟 3：產生回答"><rect x="440" y="50" width="160" height="56" rx="8"/><text class="nm" x="520" y="74" text-anchor="middle">3 產生回答</text><text class="sb" x="520" y="92" text-anchor="middle">語言模型・串流</text></g>
+            <g class="nd ext" data-key="s-write" tabindex="0" role="button" aria-label="步驟 4：寫回紀錄"><rect x="650" y="50" width="160" height="56" rx="8"/><text class="nm" x="730" y="74" text-anchor="middle">4 寫回紀錄</text><text class="sb" x="730" y="92" text-anchor="middle">資料庫</text></g>
+            <g class="nd plan" data-key="s-cache" tabindex="0" role="button" aria-label="快取命中，待決定"><rect x="230" y="160" width="160" height="56" rx="8"/><text class="nm" x="310" y="184" text-anchor="middle">快取命中</text><text class="sb" x="310" y="202" text-anchor="middle">待決定</text></g>
+          </svg>
+        </div>
+        <figcaption class="legend">
+          <span><i class="sw ours"></i>自家程式</span>
+          <span><i class="sw ai"></i>模型</span>
+          <span><i class="sw ext"></i>外部服務</span>
+          <span><i class="sw plan"></i>未實作或待決定</span>
+        </figcaption>
+      </figure>
+      <aside class="panel" id="panel-flow" aria-live="polite" aria-label="說明面板"></aside>
+    </div>
+    <details>
+      <summary>各步驟耗時（示意）</summary>
+      <div class="t-wrap">
+        <table>
+          <thead><tr><th>步驟</th><th>中位數</th><th>出處</th></tr></thead>
+          <tbody>
+            <tr><td>讀對話紀錄</td><td class="n">20 ms</td><td>請求 log，30 次（示意）</td></tr>
+            <tr><td>檢索</td><td class="n">350 ms</td><td>請求 log，30 次（示意）</td></tr>
+            <tr><td>產生回答</td><td class="n">1.4 s</td><td>請求 log，30 次（示意）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <p>更新日期 2026-01-15・行號以 commit <code>abc1234</code> 為準</p>
+  <p>標「示意」的數字是自編範例，不是實測值。細節見 repo 的決策文件。</p>
+</footer>
+
+<script type="application/json" id="panel-data">
+{
+  "s-read": {"eyebrow": "步驟 1", "group": "ext", "title": "讀對話紀錄", "lede": "從資料庫讀這個對話最近的紀錄，前端不送歷史。", "kv": [{"k": "最多讀", "v": "10 輪", "code": "api/config.py:HISTORY_TURNS"}], "src": ["api/chat.py:47"]},
+  "s-search": {"eyebrow": "步驟 2", "group": "ours", "title": "檢索", "lede": "用問題查搜尋引擎，取前 10 段。架構細節見全景頁的「檢索」。", "src": ["api/chat.py:58", "api/search.py:30"]},
+  "s-answer": {"eyebrow": "步驟 3", "group": "ai", "title": "產生回答", "lede": "把問題、紀錄與段落交給語言模型。回答邊寫邊串流回前端。", "kv": [{"k": "逾時", "v": "30 秒", "code": "api/config.py:LLM_TIMEOUT"}], "src": ["api/llm.py:25"]},
+  "s-write": {"eyebrow": "步驟 4", "group": "ext", "title": "寫回紀錄", "lede": "回答完成後，把問題與回答寫回資料庫。", "src": ["api/store.py:31"]},
+  "s-cache": {"eyebrow": "分支", "group": "ours", "status": "待決定", "title": "快取命中", "lede": "相同問題直接回上次的答案。等量到重複比例再決定。", "src": []},
+  "e-1": {"eyebrow": "連線", "group": "ours", "title": "讀紀錄 → 檢索", "lede": "紀錄只給模型用，不影響檢索。", "src": ["api/chat.py:58"]},
+  "e-2": {"eyebrow": "連線", "group": "ai", "title": "檢索 → 產生回答", "lede": "段落附來源編號，模型回答時引用編號。", "src": ["api/llm.py:25"]},
+  "e-3": {"eyebrow": "連線", "group": "ours", "title": "產生回答 → 寫回紀錄", "lede": "串流結束後才寫回；中途斷線不寫。", "src": ["api/store.py:31"]},
+  "e-cache": {"eyebrow": "連線", "group": "ours", "status": "待決定", "title": "檢索 → 快取", "lede": "未實作。", "src": []}
+}
+</script>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<title>聊天服務架構</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap">
+<link rel="stylesheet" href="shared.css">
+
+<a class="skip" href="#main">跳到主要內容</a>
+<nav class="topnav" id="site-nav" data-current="index" aria-label="架構說明站"></nav>
+
+<main id="main">
+  <header>
+    <h1>這個聊天服務由哪些部分組成？</h1>
+    <p class="cap">使用者在網頁提問，後端先從搜尋引擎找資料，再交給語言模型寫回答。點圖上的方塊或連線看說明。</p>
+    <dl class="facts">
+      <div><dt>元件</dt><dd>8</dd></div>
+      <div><dt>外部服務</dt><dd>2</dd></div>
+      <div><dt>平均回應時間</dt><dd>1.8 秒<small>30 次・示意</small></dd></div>
+    </dl>
+  </header>
+
+  <section aria-labelledby="h-map">
+    <h2 id="h-map">全景</h2>
+    <div class="stage">
+      <figure class="fig" style="margin:0">
+        <div class="scroll">
+          <svg viewBox="0 0 880 360" role="group" aria-labelledby="map-title map-desc" data-panel="panel-map" data-default="api">
+            <title id="map-title">聊天服務全景圖</title>
+            <desc id="map-desc">前端呼叫 API 服務；API 服務呼叫檢索與語言模型，並讀寫資料庫；檢索查搜尋引擎；匯入工作把文件寫進搜尋引擎。快取尚未實作。</desc>
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0 0L10 5L0 10z"/></marker>
+            </defs>
+            <rect class="zone" x="195" y="126" width="390" height="104" rx="10"/>
+            <text class="zl" x="205" y="120">後端</text>
+
+            <g class="ed ours" data-key="e-web-api" data-link="web api" tabindex="0" role="button" aria-label="連線：前端到 API 服務">
+              <path class="hit" d="M160 178H210"/><path class="ln" d="M160 178H208" marker-end="url(#arr)"/>
+            </g>
+            <g class="ed ours" data-key="e-api-ret" data-link="api retrieval" tabindex="0" role="button" aria-label="連線：API 服務到檢索">
+              <path class="hit" d="M350 178H420"/><path class="ln" d="M350 178H418" marker-end="url(#arr)"/>
+            </g>
+            <g class="ed ext" data-key="e-ret-search" data-link="retrieval search" tabindex="0" role="button" aria-label="連線：檢索到搜尋引擎">
+              <path class="hit" d="M560 178H650"/><path class="ln" d="M560 178H648" marker-end="url(#arr)"/>
+              <text class="el" x="605" y="170" text-anchor="middle">查詢</text>
+            </g>
+            <g class="ed ai" data-key="e-api-llm" data-link="api llm" tabindex="0" role="button" aria-label="連線：API 服務到語言模型">
+              <path class="hit" d="M280 150V68H420"/><path class="ln" d="M280 150V68H418" marker-end="url(#arr)"/>
+            </g>
+            <g class="ed ext" data-key="e-api-db" data-link="api db" tabindex="0" role="button" aria-label="連線：API 服務到資料庫">
+              <path class="hit" d="M280 206V270"/><path class="ln" d="M280 206V268" marker-end="url(#arr)"/>
+            </g>
+            <g class="ed ext" data-key="e-ingest-search" data-link="ingest search" tabindex="0" role="button" aria-label="連線：匯入工作到搜尋引擎">
+              <path class="hit" d="M720 270V206"/><path class="ln" d="M720 270V208" marker-end="url(#arr)"/>
+            </g>
+            <g class="ed plan" data-key="e-ret-cache" data-link="retrieval cache" tabindex="0" role="button" aria-label="連線：檢索到快取，未實作">
+              <path class="hit" d="M490 206V270"/><path class="ln" d="M490 206V268" marker-end="url(#arr)"/>
+            </g>
+
+            <g class="nd ours" data-key="web" tabindex="0" role="button" aria-label="前端"><rect x="20" y="150" width="140" height="56" rx="8"/><text class="nm" x="90" y="174" text-anchor="middle">前端</text><text class="sb" x="90" y="192" text-anchor="middle">Web app</text></g>
+            <g class="nd ours" data-key="api" tabindex="0" role="button" aria-label="API 服務"><rect x="210" y="150" width="140" height="56" rx="8"/><text class="nm" x="280" y="174" text-anchor="middle">API 服務</text><text class="sb" x="280" y="192" text-anchor="middle">HTTP + SSE</text></g>
+            <g class="nd ours" data-key="retrieval" tabindex="0" role="button" aria-label="檢索"><rect x="420" y="150" width="140" height="56" rx="8"/><text class="nm" x="490" y="174" text-anchor="middle">檢索</text><text class="sb" x="490" y="192" text-anchor="middle">hybrid + rerank</text></g>
+            <g class="nd ext" data-key="search" tabindex="0" role="button" aria-label="搜尋引擎"><rect x="650" y="150" width="140" height="56" rx="8"/><text class="nm" x="720" y="174" text-anchor="middle">搜尋引擎</text><text class="sb" x="720" y="192" text-anchor="middle">BM25 + 向量</text></g>
+            <g class="nd ai" data-key="llm" tabindex="0" role="button" aria-label="語言模型"><rect x="420" y="40" width="140" height="56" rx="8"/><text class="nm" x="490" y="64" text-anchor="middle">語言模型</text><text class="sb" x="490" y="82" text-anchor="middle">LLM API</text></g>
+            <g class="nd ext" data-key="db" tabindex="0" role="button" aria-label="資料庫"><rect x="210" y="270" width="140" height="56" rx="8"/><text class="nm" x="280" y="294" text-anchor="middle">資料庫</text><text class="sb" x="280" y="312" text-anchor="middle">對話紀錄</text></g>
+            <g class="nd plan" data-key="cache" tabindex="0" role="button" aria-label="快取，未實作"><rect x="420" y="270" width="140" height="56" rx="8"/><text class="nm" x="490" y="294" text-anchor="middle">快取</text><text class="sb" x="490" y="312" text-anchor="middle">未實作</text></g>
+            <g class="nd ours" data-key="ingest" tabindex="0" role="button" aria-label="匯入工作"><rect x="650" y="270" width="140" height="56" rx="8"/><text class="nm" x="720" y="294" text-anchor="middle">匯入工作</text><text class="sb" x="720" y="312" text-anchor="middle">每日排程</text></g>
+          </svg>
+        </div>
+        <figcaption class="legend">
+          <span><i class="sw ours"></i>自家程式</span>
+          <span><i class="sw ai"></i>模型</span>
+          <span><i class="sw ext"></i>外部服務</span>
+          <span><i class="sw plan"></i>未實作或待決定</span>
+        </figcaption>
+      </figure>
+      <aside class="panel" id="panel-map" aria-live="polite" aria-label="說明面板"></aside>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-topics">
+    <h2 id="h-topics">主題頁</h2>
+    <p class="cap">建議照順序讀；每頁回答一個問題。</p>
+    <ol class="topics">
+      <li><a href="topic.html"><span class="q">一則訊息怎麼走？</span><span class="a">從使用者送出到回答串流回來，經過哪幾步、各花多久。</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-src">
+    <h2 id="h-src">數字出處</h2>
+    <details>
+      <summary>本頁數字的出處與查詢日期</summary>
+      <div class="t-wrap">
+        <table>
+          <thead><tr><th>數字</th><th>出處</th><th>查詢日期</th></tr></thead>
+          <tbody>
+            <tr><td>平均回應時間 1.8 秒</td><td>API 服務的請求 log，30 次（示意）</td><td>2026-01-15</td></tr>
+            <tr><td>元件 8、外部服務 2</td><td>本頁全景圖</td><td>2026-01-15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <p>更新日期 2026-01-15・行號以 commit <code>abc1234</code> 為準</p>
+  <p>標「示意」的數字是自編範例，不是實測值。細節見 repo 的決策文件。</p>
+</footer>
+
+<script type="application/json" id="panel-data">
+{
+  "web": {"eyebrow": "前端", "group": "ours", "title": "前端", "lede": "使用者在這裡提問。回答用串流逐字顯示，不等整段寫完。", "kv": [{"k": "框架", "v": "SPA"}], "src": ["web/src/chat.ts:18"]},
+  "api": {"eyebrow": "後端", "group": "ours", "title": "API 服務", "lede": "收到問題後，先讀對話紀錄，再呼叫檢索，最後把資料交給語言模型。回答用 SSE 串流回前端。", "kv": [{"k": "回傳方式", "v": "SSE"}], "src": ["api/chat.py:42"]},
+  "retrieval": {"eyebrow": "後端", "group": "ours", "title": "檢索", "lede": "關鍵字與向量各找一批，合併後重新排序，取前 10 段給模型。", "kv": [{"k": "每路取", "v": "100", "code": "api/search.py:CANDIDATES"}, {"k": "給模型", "v": "10 段", "code": "api/search.py:TOP_K"}], "details": "合併用 RRF；重新排序用 rerank 模型。", "src": ["api/search.py:30"]},
+  "search": {"eyebrow": "外部服務", "group": "ext", "title": "搜尋引擎", "lede": "存全部文件段落，提供關鍵字與向量兩種查詢。", "kv": [{"k": "段落數", "v": "12,000", "note": "示意"}], "src": ["infra/search/index.json:1"]},
+  "llm": {"eyebrow": "模型", "group": "ai", "title": "語言模型", "lede": "依檢索到的段落寫回答，並標出引用的來源。", "kv": [{"k": "單次費用", "v": "沒有紀錄"}], "src": ["api/llm.py:25"]},
+  "db": {"eyebrow": "外部服務", "group": "ext", "title": "資料庫", "lede": "存對話紀錄。閒置太久的對話會被清掉。", "kv": [{"k": "閒置清除", "v": "10 分鐘", "code": "api/config.py:IDLE_TIMEOUT"}], "src": ["api/store.py:15"]},
+  "cache": {"eyebrow": "後端", "group": "ours", "status": "未實作", "title": "快取", "lede": "重複的問題直接回快取結果。還沒決定要不要做。", "src": []},
+  "ingest": {"eyebrow": "後端", "group": "ours", "title": "匯入工作", "lede": "每天把新文件切段、算向量，寫進搜尋引擎。內容沒變的文件跳過。", "kv": [{"k": "排程", "v": "每日 1 次"}], "src": ["ingest/run.py:20"]},
+  "e-web-api": {"eyebrow": "連線", "group": "ours", "title": "前端 → API 服務", "lede": "前端送出問題，API 服務用 SSE 逐段回傳。", "src": ["api/chat.py:42"]},
+  "e-api-ret": {"eyebrow": "連線", "group": "ours", "title": "API 服務 → 檢索", "lede": "每則訊息呼叫一次檢索。", "src": ["api/chat.py:58"]},
+  "e-ret-search": {"eyebrow": "連線", "group": "ext", "title": "檢索 → 搜尋引擎", "lede": "關鍵字與向量查詢在搜尋引擎內完成，後端只合併結果。", "src": ["api/search.py:30"]},
+  "e-api-llm": {"eyebrow": "連線", "group": "ai", "title": "API 服務 → 語言模型", "lede": "把問題、對話紀錄與檢索結果一起送給模型。", "src": ["api/llm.py:25"]},
+  "e-api-db": {"eyebrow": "連線", "group": "ext", "title": "API 服務 → 資料庫", "lede": "讀最近的對話紀錄，回答完寫回去。", "src": ["api/store.py:15"]},
+  "e-ingest-search": {"eyebrow": "連線", "group": "ext", "title": "匯入工作 → 搜尋引擎", "lede": "整批寫入；寫完才切換到新索引。", "src": ["ingest/run.py:44"]},
+  "e-ret-cache": {"eyebrow": "連線", "group": "ours", "status": "待決定", "title": "檢索 → 快取", "lede": "要不要加快取，等量測到重複問題的比例再決定。", "src": []}
+}
+</script>
+<script src="shared.js"></script>
