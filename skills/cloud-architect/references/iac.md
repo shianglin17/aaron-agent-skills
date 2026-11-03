@@ -14,9 +14,11 @@ setup 模式用；任何模式要動雲端資源時都照這份。
 
 ## 執行
 
-1. 跑 `terraform plan`，列出要新增、修改、刪除的資源。
+1. 產生計畫檔，列出要新增、修改、刪除的資源：
+   - 新增或修改：`terraform plan -out=tfplan`
+   - 刪除全部資源：`terraform plan -destroy -out=tfplan`
 2. 等使用者確認。
-3. 確認後才跑 `terraform apply` 或 `terraform destroy`。
+3. 確認後跑 `terraform apply tfplan`，只套用使用者確認過的計畫。
 
 - 不碰正式環境，除非使用者明確指定。
 
