@@ -4,8 +4,8 @@
     "name": "shianglin17"
   },
   "metadata": {
-    "description": "Agent skills for personal projects: pull request review verification and a single cloud entry for AWS, Google Cloud, and Cloudflare.",
-    "version": "4.0.0"
+    "description": "Agent skills for personal projects: pull request review verification, a single cloud entry for AWS, Google Cloud, and Cloudflare, and multi-page architecture sites for existing codebases.",
+    "version": "4.1.0"
   },
   "plugins": [
     {
@@ -24,6 +24,15 @@
       "strict": false,
       "skills": [
         "./skills/cloud-architect"
+      ]
+    },
+    {
+      "name": "architecture",
+      "description": "Turns an existing codebase into a multi-page, diagram-led architecture site with linked diagrams and panels, conclusions only, and code line refs pinned to a commit.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/architecture-site"
       ]
     }
   ]
