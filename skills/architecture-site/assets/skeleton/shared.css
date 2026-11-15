@@ -1,29 +1,27 @@
 /* Layout: one main diagram per section, side panel annotates the selected node; prose is captions only. */
 /* shared:start: same text in doc-types/assets/skeleton/page.css and architecture-site/assets/skeleton/shared.css; scripts/check_shared_tokens.py compares them */
 :root {
-  --bg: #F3F5F8; --surface: #FFFFFF; --sunk: #E9EDF2;
-  --ink: #16202E; --ink-2: #3F4B5E; --muted: #5C677A;
-  --rule: #D6DCE5; --rule-strong: #AEB8C7;
-  --accent: #0F7B6C; --accent-ink: #0A5E52; --accent-tint: #DDF2EE;
-  --f-display: "Noto Serif TC", "Songti TC", Georgia, serif;
-  --f-body: "IBM Plex Sans", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
-  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --radius: 12px;
+  --bg: #FFFFFF; --surface: #FFFFFF; --sunk: #F1F3F5;
+  --ink: #111418; --ink-2: #3D434C; --muted: #646B76;
+  --rule: #DADFE5; --rule-strong: #A9B1BC;
+  --accent: #0F7B6C; --accent-ink: #0A5E52; --accent-tint: #EBF3F0;
+  --f-body: "PingFang TC", "Noto Sans TC", "Noto Sans CJK TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --f-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0F141B; --surface: #161D27; --sunk: #1D2532;
-    --ink: #E6EAF0; --ink-2: #B3BCCA; --muted: #8F99AA;
-    --rule: #2A3341; --rule-strong: #445063;
-    --accent: #3FB6A3; --accent-ink: #7DD8C9; --accent-tint: #163430;
+    --bg: #111418; --surface: #111418; --sunk: #1B2026;
+    --ink: #ECEFF2; --ink-2: #BAC1CB; --muted: #8F97A3;
+    --rule: #2C323A; --rule-strong: #4A525D;
+    --accent: #3FB6A3; --accent-ink: #7DD8C9; --accent-tint: #1A2925;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0F141B; --surface: #161D27; --sunk: #1D2532;
-  --ink: #E6EAF0; --ink-2: #B3BCCA; --muted: #8F99AA;
-  --rule: #2A3341; --rule-strong: #445063;
-  --accent: #3FB6A3; --accent-ink: #7DD8C9; --accent-tint: #163430;
+  --bg: #111418; --surface: #111418; --sunk: #1B2026;
+  --ink: #ECEFF2; --ink-2: #BAC1CB; --muted: #8F97A3;
+  --rule: #2C323A; --rule-strong: #4A525D;
+  --accent: #3FB6A3; --accent-ink: #7DD8C9; --accent-tint: #1A2925;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -33,11 +31,11 @@ body {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-h1, h2 { font-family: var(--f-display); font-weight: 700; margin: 0; text-wrap: balance; }
+h1, h2 { font-weight: 700; margin: 0; text-wrap: balance; }
 h3 { margin: 0; text-wrap: balance; }
 p { margin: 0; }
 a { color: var(--accent-ink); text-underline-offset: .2em; }
-code { font-family: var(--f-mono); font-size: .86em; background: var(--sunk); padding: .05em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+code { font-family: var(--f-mono); font-size: .875em; overflow-wrap: anywhere; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 ::selection { background: var(--accent-tint); color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {

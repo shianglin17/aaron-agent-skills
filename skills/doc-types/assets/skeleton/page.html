@@ -5,97 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>範例服務搬遷進度</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap">
 <link rel="stylesheet" href="page.css">
 </head>
 <body>
 <!-- 元件示範：每個元件各用一次。實際的頁面一份只做一種類型，元件挑需要的用。內容全是虛構的。 -->
+<!-- 字型用系統的黑體，不載入網路字型。檔名、指令、欄位名用 <code>，不加底色。 -->
 <main class="page">
 
-  <!-- 頁首：h1 寫這份東西的名字，副標寫事件日期與資料截至日期 -->
+  <!-- 頁首：h1 寫結論句，是整頁最大的字；下一行寫日期與資料截至日期 -->
   <header class="masthead">
-    <h1>範例服務的資料庫搬遷</h1>
+    <h1>讀取已全部切到新資料庫。寫入還差 2 張表，要你核准停機時段。</h1>
     <p class="sub">2026-01-05 開始搬遷。資料截至 2026-01-15。</p>
   </header>
 
-  <!-- 第一屏：結論 → 要讀者做的事 ｜ 還沒解決的風險 -->
-  <section class="brief" aria-label="結論、要你做的事、風險">
-    <div class="verdict">
-      <h2 class="label">結論</h2>
-      <p class="lead">讀取已全部切到新資料庫，回應時間沒有變慢。寫入還有 2 張表在舊資料庫，預計 1 月底前切完。</p>
-    </div>
-    <div class="split">
-      <div class="pane">
-        <h2 class="label act">要你做的事</h2>
-        <ol class="steps">
-          <li>核准 1 月 22 日晚上的停機時段（30 分鐘），1 月 20 日前回覆。<span class="meta">回覆：<a href="#">範例 issue #12</a></span></li>
-          <li>確認舊資料庫的備份要留多久，預設 90 天。<span class="meta">回覆：<a href="#">範例 issue #13</a></span></li>
-          <li class="void"><s>決定要不要搬報表資料</s>：不用決定了，報表已改讀新資料庫。<span class="meta">見 <a href="#">範例 issue #9</a></span></li>
-        </ol>
-      </div>
-      <div class="pane">
-        <h2 class="label risk">還沒解決的風險</h2>
-        <ol class="steps risk">
-          <li>訂單表切換時，正在付款的訂單可能重複扣款。停機時段核准後才能排除。</li>
-          <li>舊資料庫的授權 2 月 1 日到期，到時還沒切完會停止寫入。<span class="meta"><span class="stale">1/10 的狀態，之後沒有紀錄</span></span></li>
-        </ol>
-      </div>
-    </div>
+  <!-- 要讀者做的事：整頁兩塊底色之一（另一塊是建議的選項）。
+       只有 1 件：不用 ol，h2 直接寫那件事，下面用 p 寫怎麼做、不做會怎樣（.why）、怎麼回覆。
+       2 件以上：h2 寫「要你做的 N 件事」，用 ol 一般數字；每項先寫動作（b），再寫期限，回覆方式放 .meta。
+       沒有要做的事：h2 寫「不用你處理」，不放 ol。 -->
+  <section class="act" aria-labelledby="act-h">
+    <h2 id="act-h">要你做的 2 件事</h2>
+    <ol>
+      <li><b>核准 1 月 22 日晚上的停機時段（30 分鐘）</b>，1 月 20 日前回覆。<span class="meta">回覆：<a href="#">範例 issue #12</a></span></li>
+      <li><b>決定舊資料庫的備份留多久</b>，預設 90 天，沒回覆就照預設。<span class="meta">回覆：<a href="#">範例 issue #13</a></span></li>
+    </ol>
   </section>
 
-  <!-- 數字摘要：3–4 個關鍵數字 -->
-  <section>
-    <h2>搬了多少？</h2>
-    <dl class="facts">
-      <div><dt>已搬的表</dt><dd>14<small>共 16 張</small></dd></div>
-      <div><dt>讀取回應時間</dt><dd>120 ms<small>中位數・示意</small></dd></div>
-      <div><dt>資料差異</dt><dd>0 筆<small>1/14 比對</small></dd></div>
-    </dl>
+  <!-- 風險：一般文字，不加框、不加底色。1 項用 p；2 項以上用 ol，正文才能寫「風險 2」回指。沒有風險：整節拿掉，或寫「沒有還沒解決的風險」 -->
+  <section aria-labelledby="risk-h">
+    <h2 id="risk-h">還沒解決的風險</h2>
+    <ol>
+      <li>訂單表切換時，正在付款的訂單可能重複扣款。停機時段核准後才能排除。</li>
+      <li>舊資料庫的授權 2 月 1 日到期，到時還沒切完會停止寫入。<span class="meta">1/10 的狀態，之後沒有紀錄。</span></li>
+    </ol>
   </section>
 
-  <!-- 狀態項：圖例 + 每項欄位相同；要讀者處理的那一項加 .need -->
-  <section>
-    <h2>哪些表還沒切完？</h2>
-    <dl class="legend" aria-label="狀態說明">
-      <div><dt><span class="st ok">已切換</span></dt><dd>讀寫都在新資料庫</dd></div>
-      <div><dt><span class="st warn">只切讀取</span></dt><dd>寫入還在舊資料庫</dd></div>
-      <div><dt><span class="st bad">失敗</span></dt><dd>試過切換，已退回</dd></div>
-      <div><dt><span class="st">未開始</span></dt><dd>還沒動</dd></div>
-    </dl>
+  <!-- 要讀者處理的項目的明細：每項 h3＋.kv，欄位相同；項目之間只用留白分開。不用處理的項目不放這裡 -->
+  <section aria-labelledby="items-h">
+    <h2 id="items-h">這 2 件事的細節</h2>
     <div class="items">
-      <div class="item need">
-        <span class="st warn">只切讀取</span>
-        <h3 class="name"><code>orders</code>：訂單</h3>
+      <div class="item">
+        <h3>停機時段：<code>orders</code> 訂單表要停機才能切寫入</h3>
         <dl class="kv">
-          <dt>還差什麼</dt><dd>寫入。要停機 30 分鐘，避免付款中的訂單寫到兩邊。</dd>
-          <dt>要處理嗎</dt><dd class="yes">要，見「要你做的事」第 1 件。</dd>
+          <dt>為什麼要停機</dt><dd>付款中的訂單不能同時寫到兩個資料庫。</dd>
+          <dt>不核准會怎樣</dt><dd>訂單表留在舊資料庫，2 月 1 日授權到期後停止寫入。</dd>
+          <dt>選項比較</dt><dd>見〈停機時段選哪個？〉。</dd>
         </dl>
       </div>
       <div class="item">
-        <span class="st bad">失敗</span>
-        <h3 class="name"><code>payments</code>：付款紀錄</h3>
+        <h3>備份保留天數：舊資料庫的最後一份備份</h3>
         <dl class="kv">
-          <dt>還差什麼</dt><dd>1/12 切換時欄位型別不合，已退回舊資料庫。修正後跟訂單表一起切。</dd>
-          <dt>要處理嗎</dt><dd>不用。</dd>
+          <dt>為什麼要決定</dt><dd>舊資料庫關掉後，這份備份是唯一能查 1 月以前原始資料的地方。</dd>
+          <dt>不回覆會怎樣</dt><dd>照預設留 90 天，之後自動刪除。</dd>
+          <dt>選項比較</dt><dd>沒有比較；只要回一個天數。</dd>
         </dl>
       </div>
     </div>
   </section>
 
-  <!-- 正常的項目合併成一段；整串同一個狀態時，標記用該狀態的色 -->
-  <section>
-    <h2>已經切完的有哪些？</h2>
-    <ul class="bullets ok">
-      <li><b>會員資料 6 張表</b>（每張表算 1 項）：1/08 切完，讀寫都在新資料庫。</li>
-      <li><b>商品資料 8 張表</b>：1/10 切完；舊表保留到 2 月 1 日。</li>
-    </ul>
+  <!-- 不用讀者處理的狀態項：合成一節，照組分，每組一行。左邊組名，右邊內容；不逐項加狀態標記 -->
+  <section aria-labelledby="rest-h">
+    <h2 id="rest-h">其他都不用你處理</h2>
+    <dl class="groups">
+      <dt>已切完</dt>
+      <dd>會員資料 6 張表（1/08）、商品資料 8 張表（1/10）。讀寫都在新資料庫。</dd>
+      <dt>會自己處理完</dt>
+      <dd><code>payments</code> 付款紀錄：1/12 切換時欄位型別不合，已退回；修正後跟訂單表一起切。</dd>
+      <dt>到期自動刪除</dt>
+      <dd>商品資料的舊表，留到 2 月 1 日。</dd>
+    </dl>
   </section>
 
-  <!-- 數字矩陣：狀態欄的表頭用同色圓點，對回圖例；合計欄加粗 -->
-  <section>
-    <h2>數字明細</h2>
+  <!-- 數字矩陣：狀態欄的表頭用同色圓點（.dot），表下用 .legend 說明每個狀態詞；狀態詞只出現在表格裡 -->
+  <section aria-labelledby="num-h">
+    <h2 id="num-h">數字明細</h2>
     <div class="tbl num">
       <table>
         <thead><tr><th>類別／單位</th><th class="n"><i class="dot ok"></i>已切換</th><th class="n"><i class="dot warn"></i>只切讀取</th><th class="n"><i class="dot bad"></i>失敗</th><th class="n"><i class="dot"></i>未開始</th><th class="n total">合計</th></tr></thead>
@@ -106,30 +88,34 @@
         </tbody>
       </table>
     </div>
-    <p class="tbl-note">合計＝「已經切完」的表數＋「還沒切完」的列數。</p>
+    <dl class="legend" aria-label="狀態說明">
+      <div><dt>已切換</dt><dd>讀寫都在新資料庫</dd></div>
+      <div><dt>只切讀取</dt><dd>寫入還在舊資料庫</dd></div>
+      <div><dt>失敗</dt><dd>試過切換，已退回</dd></div>
+      <div><dt>未開始</dt><dd>還沒動</dd></div>
+    </dl>
   </section>
 
-  <!-- 文字表格：手機上每列變成一張卡；除第一欄外，每格寫 data-label -->
-  <section>
-    <h2>出事時怎麼退回？</h2>
+  <!-- 文字表格：手機上每列疊成一段；除第一欄外，每格寫 data-label。狀態欄用 .st（圓點＋狀態詞） -->
+  <section aria-labelledby="back-h">
+    <h2 id="back-h">出事時怎麼退回？</h2>
     <div class="tbl stack">
       <table>
-        <thead><tr><th>情況</th><th>怎麼退回</th><th>要多久</th></tr></thead>
+        <thead><tr><th>情況</th><th>怎麼退回</th><th>演練過嗎</th></tr></thead>
         <tbody>
-          <tr><td>新資料庫連不上</td><td data-label="怎麼退回">設定檔切回舊連線字串，重啟服務。</td><td data-label="要多久">5 分鐘</td></tr>
-          <tr><td>資料比對有差異</td><td data-label="怎麼退回">停止寫入，從舊資料庫重新同步差異的表。</td><td data-label="要多久">沒有紀錄</td></tr>
+          <tr><td>新資料庫連不上</td><td data-label="怎麼退回">設定檔切回舊連線字串，重啟服務。約 5 分鐘。</td><td data-label="演練過嗎"><span class="st ok">演練過</span></td></tr>
+          <tr><td>資料比對有差異</td><td data-label="怎麼退回">停止寫入，從舊資料庫重新同步差異的表。</td><td data-label="演練過嗎"><span class="st warn">沒演練</span></td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- 方案頁用：選項並排，欄位相同；建議的那個加 .rec 與「建議」標記 -->
-  <section>
-    <h2>停機時段選哪個？</h2>
-    <p class="conf">建議 <b>B</b>，信心程度 <b>中</b>：週間晚上的流量最低，但只有 2 週的紀錄。</p>
+  <!-- 方案頁用：選項並排，欄位相同（做法、好處、代價）。建議的那個加 .rec（底色），標題後加 .rec-mark「建議」 -->
+  <section aria-labelledby="opt-h">
+    <h2 id="opt-h">停機時段選哪個？</h2>
     <div class="options">
       <article class="option">
-        <div class="option-head"><h3>A. 週末清晨</h3></div>
+        <h3>A. 週末清晨</h3>
         <dl>
           <dt>做法</dt><dd>週六 06:00 停機 30 分鐘。</dd>
           <dt>好處</dt><dd>不影響上班時間的客服。</dd>
@@ -137,7 +123,7 @@
         </dl>
       </article>
       <article class="option rec">
-        <div class="option-head"><h3>B. 週間晚上</h3><span class="badge rec">建議</span></div>
+        <h3>B. 週間晚上 <span class="rec-mark">建議</span></h3>
         <dl>
           <dt>做法</dt><dd>週三 23:00 停機 30 分鐘。</dd>
           <dt>好處</dt><dd>這個時段的流量最低，約為尖峰的 5%（示意）。</dd>
@@ -145,7 +131,7 @@
         </dl>
       </article>
       <article class="option">
-        <div class="option-head"><h3>C. 不停機</h3><span class="badge">維持現狀</span></div>
+        <h3>C. 不停機（維持現狀）</h3>
         <dl>
           <dt>做法</dt><dd>雙寫兩週，再切讀取。</dd>
           <dt>好處</dt><dd>使用者完全感覺不到。</dd>
@@ -155,18 +141,18 @@
     </div>
   </section>
 
-  <!-- 依據與前提：每個結論附來源與成立條件；沒有證據的寫明 -->
-  <section>
-    <h2>依據與前提</h2>
+  <!-- 依據與前提：每個結論附來源與成立條件；沒有證據的，在 .claim 裡寫「（沒有證據）」 -->
+  <section aria-labelledby="basis-h">
+    <h2 id="basis-h">依據與前提</h2>
     <ul class="basis">
-      <li><p class="claim">週間晚上的流量最低</p><p class="src">來源：服務的請求 log，1/01–1/14</p><p class="cond">前提：只有 2 週的資料；不含月底結帳週。</p></li>
-      <li><p class="claim">停機 30 分鐘夠用 <span class="st">沒有證據</span></p><p class="src">來源：沒有紀錄；是依前兩次切換的時間推的。</p><p class="cond">要確定：先在測試環境演練一次，量實際時間。</p></li>
+      <li><p class="claim">週間晚上的流量最低</p><p class="src">來源：服務的請求 log，1/01–1/14。</p><p class="cond">前提：只有 2 週的資料；不含月底結帳週。</p></li>
+      <li><p class="claim">停機 30 分鐘夠用（沒有證據）</p><p class="src">來源：沒有紀錄；是依前兩次切換的時間推的。</p><p class="cond">要確定：先在測試環境演練一次，量實際時間。</p></li>
     </ul>
   </section>
 
   <!-- 圖的容器：放 diagram-design 或 dataviz 的產出；SVG 外層可橫向捲動 -->
-  <section>
-    <h2>切換時資料怎麼走？</h2>
+  <section aria-labelledby="fig-h">
+    <h2 id="fig-h">切換時資料怎麼走？</h2>
     <figure class="fig">
       <div class="scroll">
         <svg viewBox="0 0 640 120" role="img" aria-labelledby="fig-t fig-d">
@@ -184,9 +170,9 @@
     </figure>
   </section>
 
-  <!-- 教學、操作指南用：編號步驟，每步附會看到的結果（.output），最後一塊「確認做完」（.verify） -->
-  <section>
-    <h2>怎麼手動切回舊資料庫？</h2>
+  <!-- 教學、操作指南用：ol.steps 編號步驟，每步附會看到的結果（.output，等寬字、縮排、不加底色）；最後一節 ul.checks「確認做完」 -->
+  <section aria-labelledby="howto-h">
+    <h2 id="howto-h">怎麼手動切回舊資料庫？</h2>
     <ol class="steps">
       <li>把設定檔的 <code>DB_URL</code> 改回舊的連線字串。</li>
       <li>重啟服務，看到這兩行就是連上了：
@@ -194,18 +180,16 @@
 ready in 2.1s</pre>
       </li>
     </ol>
-    <div class="verify">
-      <h3>確認做完</h3>
-      <ul class="checks">
-        <li>健康檢查 <code>/healthz</code> 回 200。</li>
-        <li>新下的一筆測試訂單出現在舊資料庫。</li>
-      </ul>
-    </div>
+    <h3>確認做完</h3>
+    <ul class="checks">
+      <li>健康檢查 <code>/healthz</code> 回 200。</li>
+      <li>新下的一筆測試訂單出現在舊資料庫。</li>
+    </ul>
   </section>
 
-  <!-- 參考用：一列一個欄位；名稱、型別、預設值用等寬字；手機上每列變成卡片 -->
-  <section>
-    <h2>連線設定有哪些欄位？</h2>
+  <!-- 參考用：一列一個欄位；型別、預設值用等寬字；手機上每列疊成一段 -->
+  <section aria-labelledby="ref-h">
+    <h2 id="ref-h">連線設定有哪些欄位？</h2>
     <div class="tbl stack fields">
       <table>
         <thead><tr><th>欄位</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
@@ -217,7 +201,7 @@ ready in 2.1s</pre>
     </div>
   </section>
 
-  <!-- 可收合的明細：放不必讀、但要查得到的內容 -->
+  <!-- 可收合的明細：放不必讀、但要查得到的內容。不加框，只有一行標題 -->
   <details class="more">
     <summary>每張表的切換日期<span class="note">16 張表</span></summary>
     <div class="body">
@@ -233,6 +217,7 @@ ready in 2.1s</pre>
     </div>
   </details>
 
+  <!-- 頁尾：來源與注意事項 -->
   <footer class="foot">
     <p>來源：<a href="#">範例 issue #9</a>、<a href="#">#12</a>、<a href="#">#13</a> 的留言；搬遷計畫文件。</p>
     <p>標「示意」的數字是自編範例，不是實測值。</p>
