@@ -4,8 +4,8 @@
     "name": "shianglin17"
   },
   "metadata": {
-    "description": "Agent skills for personal projects: pull request review verification, a single cloud entry for AWS, Google Cloud, and Cloudflare, and multi-page architecture sites for existing codebases.",
-    "version": "4.1.0"
+    "description": "Agent skills for personal projects: pull request review verification, a single cloud entry for AWS, Google Cloud, and Cloudflare, multi-page architecture sites for existing codebases, and content structure for documents, decision records, and pages.",
+    "version": "4.2.0"
   },
   "plugins": [
     {
@@ -33,6 +33,15 @@
       "strict": false,
       "skills": [
         "./skills/architecture-site"
+      ]
+    },
+    {
+      "name": "docs",
+      "description": "Sets the content structure before writing a document, decision record (ADR), or page: reader and task, one doc type, skeleton, acceptance questions, and a reviewer check before publishing.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/doc-types"
       ]
     }
   ]
