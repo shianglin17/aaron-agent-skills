@@ -10,8 +10,8 @@ Agent skills for personal projects, following the open [Agent Skills](https://ag
 |---|---|
 | [`verify-review-findings`](skills/verify-review-findings/SKILL.md) | Verifies PR review findings one by one before changing any code. |
 | [`cloud-architect`](skills/cloud-architect/SKILL.md) | One entry for AWS, Google Cloud, and Cloudflare: learn a service, evaluate and price options, design an architecture, set up resources with Terraform. Facts come from official sources. |
-| [`architecture-site`](skills/architecture-site/SKILL.md) | Turns an existing codebase into a multi-page, diagram-led architecture site: one reader question per page, linked diagram and side panel, code line refs pinned to a commit. Ships a page skeleton and check scripts. |
-| [`doc-types`](skills/doc-types/SKILL.md) | Sets the content structure before you write a document, decision record (ADR), or page: reader and task, one doc type, skeleton, 3–5 acceptance questions, and a reviewer check before publishing. Ships an ADR template. |
+| [`architecture-site`](skills/architecture-site/SKILL.md) | Turns an existing codebase into a multi-page, diagram-led architecture site: one reader question per page, linked diagram and side panel, code line refs pinned to a commit. Ships a page skeleton and check scripts. Uses the content rules in `doc-types`, so install both. |
+| [`doc-types`](skills/doc-types/SKILL.md) | Sets the content structure before you write a document, decision record (ADR), or page: reader and task, one doc type, skeleton, 3–5 acceptance questions, and a reviewer check before publishing. Ships an ADR template, a single-page skeleton, and scripts to build and check a page. |
 
 ## Install
 
@@ -31,6 +31,8 @@ npx skills add shianglin17/aaron-agent-skills --list
 
 Drop `-g` to install into the current project instead.
 
+`architecture-site` and `doc-types` share one set of colors and fonts. `python3 scripts/check_shared_tokens.py` checks that the shared CSS block is the same in both skeletons.
+
 ### As a Claude Code plugin marketplace
 
 ```text
@@ -45,7 +47,7 @@ Drop `-g` to install into the current project instead.
 |---|---|
 | `review` | `verify-review-findings` |
 | `cloud` | `cloud-architect` |
-| `architecture` | `architecture-site` |
+| `architecture` | `architecture-site` (install `docs` too) |
 | `docs` | `doc-types` |
 
 ## `cloud-architect` at a glance

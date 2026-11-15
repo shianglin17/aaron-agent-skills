@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Agent skills for personal projects: pull request review verification, a single cloud entry for AWS, Google Cloud, and Cloudflare, multi-page architecture sites for existing codebases, and content structure for documents, decision records, and pages.",
-    "version": "4.2.0"
+    "version": "4.3.0"
   },
   "plugins": [
     {
@@ -28,7 +28,7 @@
     },
     {
       "name": "architecture",
-      "description": "Turns an existing codebase into a multi-page, diagram-led architecture site with linked diagrams and panels, conclusions only, and code line refs pinned to a commit.",
+      "description": "Turns an existing codebase into a multi-page, diagram-led architecture site with linked diagrams and panels, conclusions only, and code line refs pinned to a commit. Uses the content rules in the docs plugin.",
       "source": "./",
       "strict": false,
       "skills": [
@@ -37,7 +37,7 @@
     },
     {
       "name": "docs",
-      "description": "Sets the content structure before writing a document, decision record (ADR), or page: reader and task, one doc type, skeleton, acceptance questions, and a reviewer check before publishing.",
+      "description": "Sets the content structure before writing a document, decision record (ADR), or page: reader and task, one doc type, skeleton, acceptance questions, and a reviewer check before publishing. Ships a single-page skeleton with build and check scripts.",
       "source": "./",
       "strict": false,
       "skills": [

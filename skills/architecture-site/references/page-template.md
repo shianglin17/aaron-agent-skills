@@ -2,6 +2,8 @@
 
 建頁面、抽共用檔時照這份。起點：[assets/skeleton/](../assets/skeleton/)。頁面規格（title、字型、外部 script、深色模式）照 `artifact-design`，這裡不重寫。
 
+每一頁照 `doc-types` types.md〈解釋〉的骨架：`header` 的說明句是一句結論；主圖加面板是運作方式；取捨與相關放最後一節或頁尾連結。
+
 ## 每頁的結構
 
 依序：
@@ -32,7 +34,10 @@
 
 ## 色票 token
 
-在 `:root` 定義，深色模式照 `artifact-design` 的三段寫法。語意色固定三組，加一組灰色給計畫中的東西：
+在 `:root` 定義，深色模式照 `artifact-design` 的三段寫法。
+
+- 中性色、`--accent`、字型、基礎樣式寫在 `shared.css` 的 `shared:start`–`shared:end` 區塊。這個區塊跟 `doc-types` 的 `page.css` 一字不差；要改就兩邊一起改，再跑 repo 的 `scripts/check_shared_tokens.py`。
+- 區塊之後是說明站專用的語意色：固定三組，加一組灰色給計畫中的東西：
 
 | token | 意思 | 用在 |
 |---|---|---|
