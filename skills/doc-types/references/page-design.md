@@ -59,6 +59,7 @@
 - `page.css` 的 `shared:start`–`shared:end` 區塊跟 `architecture-site` 的 `shared.css` 相同；要改就兩邊一起改。
 - 狀態用語照 [structure-rules.md](structure-rules.md)〈狀態用語〉定；每個值對一個 tone：`.st.ok`、`.st.warn`、`.st.bad`、`.st`（不確定、未開始）。
 - 要讀者處理的狀態項加 `.need`，「要處理嗎」那格加 `.yes`；「資料只到某天」的標記用 `.stale`。
+- 狀態標記（`.st`）只用在表格的狀態欄。`.stale` 一頁最多一次，放在頁首的資料日期旁。
 
 ## 視覺驗收
 
