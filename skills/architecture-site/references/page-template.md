@@ -36,7 +36,7 @@
 
 在 `:root` 定義，深色模式照 `artifact-design` 的三段寫法。
 
-- 中性色、`--accent`、字型、基礎樣式寫在 `shared.css` 的 `shared:start`–`shared:end` 區塊。這個區塊跟 `doc-types` 的 `page.css` 一字不差；要改就兩邊一起改，再跑 repo 的 `scripts/check_shared_tokens.py`。
+- 中性色、`--accent`、字型、基礎樣式寫在 `shared.css` 開頭的 `base tokens and styles` 區塊。
 - 區塊之後是說明站專用的語意色：固定三組，加一組灰色給計畫中的東西：
 
 | token | 意思 | 用在 |

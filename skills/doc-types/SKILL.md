@@ -8,7 +8,7 @@ argument-hint: "[類型] <主題>"
 
 寫文件、決策紀錄或做頁面之前，先定四件事：讀者要完成什麼、哪一種類型、骨架、驗收題。寫完派審查者用驗收題檢查，再發布。
 
-這個 skill 管內容結構：放什麼、照什麼順序、怎麼驗收。成品是頁面時，也管從哪個樣板起手、哪些內容做成圖。
+這個 skill 管內容結構：放什麼、照什麼順序、怎麼驗收。頁面的視覺與規格不在這裡，交給 `artifact-design`。
 
 ## 何時用
 
@@ -17,11 +17,11 @@ argument-hint: "[類型] <主題>"
 | 單頁的文件、決策紀錄、方案頁、狀況報告、說明，不依賴既有程式碼 | `doc-types` |
 | 多頁、解釋既有 repo 的架構說明站；每頁照 `doc-types` 的「解釋」骨架 | `architecture-site` |
 | 只改寫用詞、句子，結構不動 | `iso-24495` |
-| 架構、流程、時序、ER 等圖 | `diagram-design` |
+| 獨立的架構、流程、時序、ER 等圖 | `diagram-design` |
 | 資料圖表 | `dataviz` |
-| 頁面的版面、元件 | [page-design.md](references/page-design.md) 與 [assets/skeleton/](assets/skeleton/) |
+| 頁面的視覺、版面、規格：title、色彩 token、深色模式、CDN | `artifact-design` |
+| 頁面裡的圖 | `artifact-diagramming` |
 | 頁面修飾、無障礙審查 | `impeccable` |
-| 發布成 artifact 的規格：title、色彩 token、深色模式、CDN | `artifact-design` |
 
 ## 流程
 
@@ -34,7 +34,7 @@ argument-hint: "[類型] <主題>"
 - [ ] 3. 驗收題：3–5 題
 - [ ] 4. 寫：照結構規則
 - [ ] 5. 自查：照結構規則的檢查表
-- [ ] 6. 頁面：定圖、從樣板起手、修飾、截圖驗收（成品是頁面才做）
+- [ ] 6. 頁面：視覺與規格交給 `artifact-design`（成品是頁面才做）
 - [ ] 7. 審查：派只看得到成品的審查者
 - [ ] 8. 修一輪，發布
 ```
@@ -84,24 +84,22 @@ argument-hint: "[類型] <主題>"
 
 - 狀況報告與方案頁：第一屏只放結論、要讀者做的事、還沒解決的風險。
 - 章節照讀者的問題排，不照做事的順序排。
-- 格式與發布的地方照使用者指定。這個 skill 不選格式；成品是頁面時，版面照步驟 6。
+- 格式與發布的地方照使用者指定。這個 skill 不選格式；成品是頁面時，視覺照步驟 6。
 
 ### 步驟 6：頁面
 
-只在成品是頁面（HTML、artifact）時做。細節讀 [page-design.md](references/page-design.md)。
+只在成品是頁面（HTML、artifact）時做。
 
-1. 定圖：照〈哪些內容做成圖〉逐節判斷；要畫的交給 `diagram-design` 或 `dataviz`。
-2. 起手：複製 [assets/skeleton/page.html](assets/skeleton/page.html) 與 `page.css`，刪掉用不到的元件。第一次做或大改版：先做第一屏給使用者確認方向，再全做。
-3. 修飾：有 `impeccable` 就用它；發布成 artifact 時照 `artifact-design`。
-4. 組成單檔：`python3 scripts/build_page.py <頁面.html> -o <輸出.html>`，把 `page.css` 內嵌進去。
-5. 檢查：`python3 scripts/check_page.py <輸出.html>`；改版時加 `--links-like <舊版.html>` 比對連結。
-6. 驗收：截 1280 與 390 寬、淺色與深色共 4 張，照視覺驗收清單逐條打勾。
+- 內容：照本 skill 定好的類型骨架與第一屏。
+- 視覺與頁面規格：照 `artifact-design`。
+- 圖：照 `artifact-diagramming`；獨立的架構圖用 `diagram-design`，資料圖表用 `dataviz`。
+- 修飾：可用 `impeccable`。
 
 ### 步驟 7–8：審查與修改
 
 派一個審查者（另一個 agent 或人），只給它成品，不給對話、草稿或你的說明。
 
-- 給它：成品、步驟 1 的那句話、驗收題。成品是頁面時，也給步驟 6 的 4 張截圖。
+- 給它：成品、步驟 1 的那句話、驗收題。成品是頁面時，也給渲染後的畫面。
 - 照它的回報修一輪，再發布。
 - 使用者退回但說不出哪裡不好：先問是哪裡，再動手。
 - 給什麼、不給什麼、指示範本、沒辦法另派審查者時怎麼做：讀 [review.md](references/review.md)。
@@ -119,7 +117,4 @@ argument-hint: "[類型] <主題>"
 | [types.md](references/types.md) | 步驟 2：選類型、照骨架 |
 | [decision-record.md](references/decision-record.md) | 類型是決策紀錄時 |
 | [structure-rules.md](references/structure-rules.md) | 步驟 4–5：寫與自查 |
-| [page-design.md](references/page-design.md) | 步驟 6：成品是頁面時 |
-| [assets/skeleton/](assets/skeleton/) | 步驟 6：複製當起點 |
-| [scripts/](scripts/) | 步驟 6：`build_page.py` 組成單檔、`check_page.py` 檢查 |
 | [review.md](references/review.md) | 步驟 7：派審查者 |

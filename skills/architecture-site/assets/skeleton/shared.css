@@ -1,5 +1,5 @@
 /* Layout: one main diagram per section, side panel annotates the selected node; prose is captions only. */
-/* shared:start: same text in doc-types/assets/skeleton/page.css and architecture-site/assets/skeleton/shared.css; scripts/check_shared_tokens.py compares them */
+/* base tokens and styles */
 :root {
   --bg: #FFFFFF; --surface: #FFFFFF; --sunk: #F1F3F5;
   --ink: #111418; --ink-2: #3D434C; --muted: #646B76;
@@ -41,7 +41,7 @@ code { font-family: var(--f-mono); font-size: .875em; overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
-/* shared:end */
+/* end base tokens and styles */
 
 /* architecture-site only: semantic groups. ours = our code, ai = model or third-party AI, ext = external service */
 :root {
