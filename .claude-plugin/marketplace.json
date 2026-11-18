@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Agent skills for personal projects: pull request review verification, a single cloud entry for AWS, Google Cloud, and Cloudflare, multi-page architecture sites for existing codebases, and content structure for documents, decision records, and pages.",
-    "version": "5.0.0"
+    "version": "5.1.0"
   },
   "plugins": [
     {
@@ -37,7 +37,7 @@
     },
     {
       "name": "docs",
-      "description": "Sets the content structure before writing a document, decision record (ADR), or page: reader and task, one doc type, skeleton, acceptance questions, and a reviewer check before publishing. Content only: page visuals are left to artifact-design.",
+      "description": "Sets the content structure before writing a document, decision record (ADR), or page: reader and task, one doc type, skeleton, acceptance questions, and a reviewer check before publishing. For pages, requires following artifact-design: design plan, two typefaces, topic-based palette, no eyebrow, and a final check.",
       "source": "./",
       "strict": false,
       "skills": [
